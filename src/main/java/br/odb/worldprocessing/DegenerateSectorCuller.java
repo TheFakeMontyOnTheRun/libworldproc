@@ -6,7 +6,7 @@ package br.odb.worldprocessing;
 import java.util.ArrayList;
 
 import br.odb.gameapp.ApplicationClient;
-import br.odb.libscene.Sector;
+import br.odb.libscene.SpaceRegion;
 import br.odb.libscene.World;
 
 /**
@@ -26,28 +26,29 @@ public class DegenerateSectorCuller implements WorldProcessor {
 	@Override
 	public void run() {
 
-		Sector sector;
-		ArrayList<Sector> toRemove = new ArrayList<Sector>();
+		
+		ArrayList< SpaceRegion > toRemove = new ArrayList<SpaceRegion>();
 
-		for (int c = 0; c < world.getTotalSectors(); ++c) {
+		for ( SpaceRegion sr : Utils.getAllRegionsAsList( world.masterSector ) ) {
 
-			sector = world.getSector(c);
-
-			if (sector.isDegenerate()) {
+			if ( sr.isDegenerate()) {
 
 				if (client != null
-						&& LogUtils.getLevel() == LogUtils.LEVEL_VERBOSE)
-					client.printWarning("Sector " + c
+						&& Utils.getLevel() == Utils.VerbosityLevels.LEVEL_VERBOSE)
+					client.printWarning("Sector " + sr.id
 							+ " is degenerated. Removing.");
 
-				toRemove.add(sector);
+				toRemove.add( sr );
 			}
 		}
 
-		for (Sector s : toRemove) {
-			world.removeSector(s, true);
+		for (SpaceRegion s : toRemove) {
+			Utils.removeSector( world, s );
 		}
 	}
+	
+	
+	
 
 	/*
 	 * (non-Javadoc)

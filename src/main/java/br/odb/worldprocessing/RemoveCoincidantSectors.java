@@ -4,9 +4,11 @@
 package br.odb.worldprocessing;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import br.odb.gameapp.ApplicationClient;
-import br.odb.libscene.Sector;
+import br.odb.libscene.GroupSector;
+import br.odb.libscene.SpaceRegion;
 import br.odb.libscene.World;
 
 /**
@@ -25,52 +27,49 @@ public class RemoveCoincidantSectors implements WorldProcessor {
 	 */
 	@Override
 	public void run() {
-
-		ArrayList<Sector> toRemove = new ArrayList<Sector>();
-		toRemove.clear();
-
-		for (Sector s1 : world) {
-
-			if (toRemove.contains(s1))
-				continue;
-
-			if (s1.isMaster())
-				continue;
-
-			for (Sector s2 : world) {
+		
+		
+		
+		ArrayList< SpaceRegion > toRemove = new ArrayList<SpaceRegion>();
+		List< SpaceRegion > sectors = Utils.getAllRegionsAsList( world.masterSector );
+		
+		for ( SpaceRegion s1 : sectors ) {
+			for (SpaceRegion s2 : sectors ) {
 
 				if (s2 == s1)
 					continue;
 
-				if (s2.isMaster())
+				if (s2 instanceof GroupSector ) {
 					continue;
+				}
 
-				if (toRemove.contains(s2))
+				if (toRemove.contains(s2)) {
 					continue;
+				}
 
-				if (s1.contains(s2)) {
+				if ( s1.contains( s2 ) )  {
 
 					if (client != null
-							&& LogUtils.getLevel() == LogUtils.LEVEL_VERBOSE)
-						client.printWarning("sector " + s1.getId()
-								+ " contains with sector " + s2.getId());
+							&& Utils.getLevel() == Utils.VerbosityLevels.LEVEL_VERBOSE)
+						client.printWarning("sector " + s1.id
+								+ " contains with sector " + s2.id);
 
 					toRemove.add(s2);
 
-				} else if (s1.coincidant(s2)) {
+				} else if (s1.contains(s2)) {
 
 					if (client != null
-							&& LogUtils.getLevel() == LogUtils.LEVEL_VERBOSE)
-						client.printWarning("sector " + s1.getId()
-								+ " coincides sector " + s2.getId());
+							&& Utils.getLevel() == Utils.VerbosityLevels.LEVEL_VERBOSE)
+						client.printWarning("sector " + s1.id
+								+ " coincides sector " + s2.id);
 
 					toRemove.add(s2);
 				}
 			}
 		}
 
-		for (int c = 0; c < toRemove.size(); ++c) {
-			world.removeSector(toRemove.get(c), false);
+		for (SpaceRegion s : toRemove) {
+			Utils.removeSector( world, s );
 		}
 	}
 

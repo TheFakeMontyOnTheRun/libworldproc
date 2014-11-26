@@ -3,14 +3,12 @@
  */
 package br.odb.worldprocessing;
 
-import java.util.ArrayList;
-
 import br.odb.gameapp.ApplicationClient;
-import br.odb.libscene.Constants;
-import br.odb.libscene.Hyperplane;
+import br.odb.libscene.GroupSector;
 import br.odb.libscene.Sector;
+import br.odb.libscene.SpaceRegion;
 import br.odb.libscene.World;
-import br.odb.utils.math.Vec3;
+import br.odb.utils.Direction;
 
 /**
  * @author monty
@@ -20,7 +18,6 @@ public class WorldLocalPartitioner implements WorldProcessor {
 
 	private ApplicationClient client;
 	private World world;
-	final ArrayList<Sector> generated = new ArrayList<Sector>();
 
 	/*
 	 * (non-Javadoc)
@@ -30,114 +27,79 @@ public class WorldLocalPartitioner implements WorldProcessor {
 	@Override
 	public void run() {
 
-		World subs = new World();
-		Sector s;
-
-		for (Sector master : world) {
-
-			s = new Sector(master);
-			s.removeAllDoors();
-			s.cleanUpMeshes();
-			s.cleanUpLinks();
-			s.setParent(master.getId());
-			s.setIsMaster(false);
-			subs.addSector(s);
+		for (SpaceRegion sr : Utils.getAllRegionsAsList(world.masterSector)) {
+			if (sr instanceof GroupSector) {
+				((GroupSector) sr).getSons().add(new Sector(sr));
+			}
 		}
 
-		for (int c = 0; c < subs.getTotalSectors(); ++c) {
-			s = subs.getSector(c);
-			splitSectorsWithPlanesFrom(s, subs);
+		for (SpaceRegion sr : Utils.getAllRegionsAsList(world.masterSector)) {
+			if (sr instanceof GroupSector) {
+				splitSectorsWithPlanesFrom((GroupSector) sr, world);
+			}
 		}
 
-		for (Sector sub : subs) {
-			world.addSector(sub);
+		int total = 0;
+
+		for (SpaceRegion sr : Utils.getAllRegionsAsList(world.masterSector)) {
+
+			if (sr instanceof Sector) {
+				++total;
+			}
 		}
 
 		client.printVerbose(" partitioning finished!");
-		client.printVerbose(" generated " + subs.getTotalSectors()
-				+ " leaf sector(s)");
+		client.printVerbose(" generated " + total + " leaf sector(s)");
 	}
 
-	public static Hyperplane generateHyperplane(final Sector sector,
-			final byte kind) {
+	public static Hyperplane generateHyperplane(final GroupSector sector,
+			final Direction kind) {
 		float n = 0.0f;
 
 		switch (kind) {
-		case Constants.FACE_N:
-			n = sector.getZ0();
+		case N:
+			n = sector.position.z;
 			break;
-		case Constants.FACE_S:
-			n = sector.getZ1();
+		case S:
+			n = sector.position.z + sector.size.z;
 			break;
-		case Constants.FACE_W:
-			n = sector.getX0();
+		case W:
+			n = sector.position.x;
 			break;
-		case Constants.FACE_E:
-			n = sector.getX1();
+		case E:
+			n = sector.position.x + sector.size.x;
 			break;
-		case Constants.FACE_FLOOR:
-			n = sector.getY0();
+		case FLOOR:
+			n = sector.position.y;
 			break;
-		case Constants.FACE_CEILING:
-			n = sector.getY1();
+		case CEILING:
+			n = sector.position.y + sector.size.y;
 			break;
 		}
 
 		return new Hyperplane(kind, n, sector);
 	}
 
-	private void splitSectorsWithPlanesFrom(Sector current, World workArea) {
+	private void splitSectorsWithPlanesFrom(GroupSector current, World workArea) {
 
-		Sector sector;
-		Sector splitting;
-		Sector generatee;
-		Hyperplane hyperplane;
-
-		sector = null;
+		Sector generated;
 
 		Hyperplane[] localPlanes = new Hyperplane[6];
 
-		for (byte d = 0; d < 6; ++d) {
-
-			localPlanes[d] = generateHyperplane(current, d);
+		for (Direction d : Direction.values()) {
+			localPlanes[d.ordinal()] = generateHyperplane(current, d);
 		}
 
-		for (int e = 0; e < workArea.getTotalSectors(); ++e) {
+		for (SpaceRegion sr : Utils.getAllRegionsAsList(world.masterSector)) {
+			if (sr instanceof Sector) {
+				for (Hyperplane h : localPlanes) {
 
-			splitting = workArea.getSector(e);
+					generated = split((Sector) sr, h);
 
-			if (current == splitting)
-				continue;
-
-			if (!current.touches(splitting))
-				continue;
-
-			generated.clear();
-			generated.add(splitting);
-
-			for (int d = 0; d < 6; ++d) {
-
-				hyperplane = localPlanes[d];
-
-				for (int c = 0; c < generated.size(); ++c) {
-
-					generatee = generated.get(c);
-					sector = split(generatee, hyperplane);
-
-					if (sector != null && !sector.isDegenerate()
-							&& !generated.contains(sector)) {
-						sector.setParent(splitting.getParent());
-						generated.add(sector);
+					if (generated != null && !generated.isDegenerate()) {
+						current.getSons().add(generated);
 					}
 				}
-			}
-
-			int generatedSize = generated.size();
-
-			for (int c = 0; c < generatedSize; ++c) {
-
-				if (!workArea.contains(generated.get(c)))
-					workArea.addSector(generated.get(c));
 			}
 		}
 	}
@@ -146,46 +108,36 @@ public class WorldLocalPartitioner implements WorldProcessor {
 
 		Sector toReturn;
 		toReturn = null;
-		Vec3 hyperplaneVector = hyperplane.getVector();
 
-		if (hyperplaneVector.x != Integer.MAX_VALUE) {
+		if (hyperplane.v.x != Integer.MAX_VALUE) {
 			// plane in YZ
 
-			if (sector.getX0() < hyperplaneVector.x
-					&& hyperplaneVector.x < sector.getX1()) {
+			if (sector.position.x < hyperplane.v.x
+					&& hyperplane.v.x < (sector.position.x + sector.size.x)) {
 				toReturn = new Sector(sector);
-				toReturn.setX0(hyperplaneVector.x);
-				sector.setX1(hyperplaneVector.x);
+				toReturn.position.x = (hyperplane.v.x);
+				sector.size.x = (hyperplane.v.x) - sector.position.x;
 			}
 
-		} else if (hyperplaneVector.y != Integer.MAX_VALUE) {
+		} else if (hyperplane.v.y != Integer.MAX_VALUE) {
 			// plane in XZ
-			if (sector.getY0() < hyperplaneVector.y
-					&& hyperplaneVector.y < sector.getY1()) {
+			if (sector.position.y < hyperplane.v.y
+					&& hyperplane.v.y < (sector.position.y + sector.size.y)) {
 				toReturn = new Sector(sector);
-				toReturn.setY0(hyperplaneVector.y);
-				sector.setY1(hyperplaneVector.y);
+				toReturn.position.y = (hyperplane.v.y);
+				sector.size.y = (hyperplane.v.y) - sector.position.y;
 			}
 
-		} else if (hyperplaneVector.z != Integer.MAX_VALUE) {
+		} else if (hyperplane.v.z != Integer.MAX_VALUE) {
 			// plane in XY
-			if (sector.getZ0() < hyperplaneVector.z
-					&& hyperplaneVector.z < sector.getZ1()) {
+			if (sector.position.z < hyperplane.v.z
+					&& hyperplane.v.z < (sector.position.z + sector.size.z)) {
 				toReturn = new Sector(sector);
-				toReturn.setZ0(hyperplaneVector.z);
-				sector.setZ1(hyperplaneVector.z);
-
+				toReturn.position.z = (hyperplane.v.z);
+				sector.size.z = (hyperplane.v.z) - sector.position.z;
 			}
-
 		}
 
-		if (toReturn != null) {
-			toReturn.removeAllDoors();
-			toReturn.cleanUpLinks();
-			toReturn.cleanUpMeshes();
-			sector.setIsMaster(false);
-			toReturn.setIsMaster(false);
-		}
 		return toReturn;
 	}
 

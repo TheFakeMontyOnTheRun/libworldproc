@@ -4,11 +4,10 @@
 package br.odb.worldprocessing;
 
 import br.odb.gameapp.ApplicationClient;
-import br.odb.gameworld.Direction;
-import br.odb.gameworld.exceptions.InvalidSlotException;
-import br.odb.libscene.Constants;
 import br.odb.libscene.Sector;
+import br.odb.libscene.SpaceRegion;
 import br.odb.libscene.World;
+import br.odb.utils.Direction;
 
 /**
  * @author monty
@@ -17,8 +16,7 @@ import br.odb.libscene.World;
 public class SectorSnapper implements WorldProcessor {
 
 	private World world;
-	private ApplicationClient client;
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -26,54 +24,48 @@ public class SectorSnapper implements WorldProcessor {
 	 */
 	@Override
 	public void run() {
-		for (Sector current : world) {
 
-			snapSectorConnections(world, current);
+		for (SpaceRegion sr : Utils.getAllRegionsAsList(world.masterSector)) {
+			if (sr instanceof Sector) {
+
+				snapSectorConnections(world, (Sector) sr);
+			}
 		}
 	}
 
 	private void snapSectorConnections(World world, Sector current) {
 
 		Sector sector;
-		int link;
 		for (Direction d : Direction.values()) {
 
-			link = current.getLink(d);
+			if (!current.connection.containsKey(d)) {
+				continue;
+			}
 
-			if (link != Constants.NO_LINK) {
+			sector = current.connection.get(d);
 
-				if (link < 0 || link > world.getTotalSectors()) {
+			synchronized (sector) {
 
-					client.printError("Sector " + current
-							+ " has a wrong link.");
+				switch (d) {
 
-				}
-
-				sector = world.getSector(link);
-
-				synchronized (sector) {
-
-					switch (d) {
-
-					case N:
-						current.setZ0(sector.getZ1());
-						break;
-					case S:
-						current.setZ1(sector.getZ0());
-						break;
-					case W:
-						current.setX0(sector.getX1());
-						break;
-					case E:
-						current.setX1(sector.getX0());
-						break;
-					case FLOOR:
-						current.setY0(sector.getY1());
-						break;
-					case CEILING:
-						current.setY1(sector.getY0());
-						break;
-					}
+				case N:
+					current.position.z = (sector.position.z + sector.size.z);
+					break;
+				case S:
+					current.size.z = (sector.position.z) - current.position.z;
+					break;
+				case W:
+					current.position.x = (sector.position.x + sector.size.x);
+					break;
+				case E:
+					current.size.x = (sector.position.x) - current.position.x;
+					break;
+				case FLOOR:
+					current.position.y = (sector.position.y + sector.size.y);
+					break;
+				case CEILING:
+					current.size.y = (sector.position.y) - current.position.y;
+					break;
 				}
 			}
 		}
@@ -91,14 +83,15 @@ public class SectorSnapper implements WorldProcessor {
 		world = worldToProcess;
 	}
 
-	@Override
-	public void setClient(ApplicationClient client) {
-		this.client = client;
-	}
 
 	@Override
 	public String toString() {
 
 		return "Snapping sectors to grid";
+	}
+
+	@Override
+	public void setClient(ApplicationClient client) {
+		
 	}
 }

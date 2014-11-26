@@ -3,23 +3,22 @@
  */
 package br.odb.worldprocessing;
 
-import br.odb.libscene.old.Constants;
-import br.odb.libscene.old.Sector;
+import br.odb.libscene.SpaceRegion;
+import br.odb.utils.Direction;
 import br.odb.utils.math.Vec3;
 
 /**
- * @author daniel
+ * @author monty
  * 
  */
 public class Hyperplane {
+
 	/**
 	 * 
 	 */
-	private byte kind;
-	private Vec3 v;
-	private Sector generator;
-
-	// ///////////////////////////
+	public final Direction kind;
+	public final Vec3 v;
+	public final SpaceRegion generator;
 
 	@Override
 	public int hashCode() {
@@ -48,15 +47,13 @@ public class Hyperplane {
 		return equals((Hyperplane) obj);
 	}
 
-	// ///////////////////////////////
-
 	@Override
 	public String toString() {
 		return "hyperplane: " + v + " kind: " + kind + " generator id: "
-				+ generator.getId();
+				+ generator.id;
 	}
 
-	public Hyperplane(byte kind, float n, Sector generator) {
+	public Hyperplane(Direction kind, float n, SpaceRegion generator) {
 
 		this.kind = kind;
 		this.v = new Vec3(Integer.MAX_VALUE, Integer.MAX_VALUE,
@@ -64,32 +61,19 @@ public class Hyperplane {
 		this.generator = generator;
 
 		switch (kind) {
-		case Constants.FACE_N:
-		case Constants.FACE_S:
+		case N:
+		case S:
 			v.z = (n);
 			break;
-		case Constants.FACE_W:
-		case Constants.FACE_E:
+		case W:
+		case E:
 			v.x = (n);
 			break;
-		case Constants.FACE_FLOOR:
-		case Constants.FACE_CEILING:
+		case FLOOR:
+		case CEILING:
 			v.y = (n);
 			break;
 		}
 
 	}
-
-	/**
-	 * 
-	 * @return
-	 */
-	public Vec3 getVector() {
-		return v;
-	}
-
-	public Sector getGenerator() {
-		return generator;
-	}
-
 }
