@@ -15,7 +15,7 @@ import br.odb.libscene.World;
  * 
  * @author monty
  */
-class Utils {
+public class Utils {
 	enum VerbosityLevels { 
 		LEVEL_NORMAL,
 		LEVEL_VERBOSE
@@ -27,7 +27,7 @@ class Utils {
 		return level;
 	}
 	
-	static void removeSectorFromSons( GroupSector gs, SpaceRegion son ) {
+	public static void removeSectorFromSons( GroupSector gs, SpaceRegion son ) {
 		for ( SpaceRegion sr : gs.getSons() ) {
 			if ( sr == son ) {
 				gs.getSons().remove( son );
@@ -38,11 +38,11 @@ class Utils {
 		}
 	}
 	
-	static void removeSector(World world, SpaceRegion s) {
+	public static void removeSector(World world, SpaceRegion s) {
 		removeSectorFromSons( world.masterSector, s );		
 	}
 
-	static List< SpaceRegion > getAllRegionsAsList( GroupSector group ) {
+	public static List< SpaceRegion > getAllRegionsAsList( GroupSector group ) {
 		
 		ArrayList< SpaceRegion > toReturn = new ArrayList< SpaceRegion >();
 		

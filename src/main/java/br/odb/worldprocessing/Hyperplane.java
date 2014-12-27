@@ -24,6 +24,7 @@ public class Hyperplane {
 	public int hashCode() {
 		return this.toString().hashCode();
 	}
+	
 
 	public boolean equals(Hyperplane another) {
 
@@ -56,8 +57,7 @@ public class Hyperplane {
 	public Hyperplane(Direction kind, float n, SpaceRegion generator) {
 
 		this.kind = kind;
-		this.v = new Vec3(Integer.MAX_VALUE, Integer.MAX_VALUE,
-				Integer.MAX_VALUE);
+		this.v = new Vec3( Float.NaN, Float.NaN, Float.NaN );
 		this.generator = generator;
 
 		switch (kind) {

@@ -36,6 +36,7 @@ public class SectorSnapper implements WorldProcessor {
 	private void snapSectorConnections(World world, Sector current) {
 
 		Sector sector;
+		
 		for (Direction d : Direction.values()) {
 
 			if (!current.connection.containsKey(d)) {
@@ -49,22 +50,22 @@ public class SectorSnapper implements WorldProcessor {
 				switch (d) {
 
 				case N:
-					current.position.z = (sector.position.z + sector.size.z);
+					current.localPosition.z = (float) Math.floor(sector.localPosition.z + sector.size.z);
 					break;
 				case S:
-					current.size.z = (sector.position.z) - current.position.z;
+					current.size.z = (float) Math.floor( (sector.localPosition.z) - current.localPosition.z );
 					break;
 				case W:
-					current.position.x = (sector.position.x + sector.size.x);
+					current.localPosition.x = (float) Math.floor(sector.localPosition.x + sector.size.x);
 					break;
 				case E:
-					current.size.x = (sector.position.x) - current.position.x;
+					current.size.x = (float) Math.floor( (sector.localPosition.x) - current.localPosition.x );
 					break;
 				case FLOOR:
-					current.position.y = (sector.position.y + sector.size.y);
+					current.localPosition.y = (float) Math.floor(sector.localPosition.y + sector.size.y);
 					break;
 				case CEILING:
-					current.size.y = (sector.position.y) - current.position.y;
+					current.size.y = (float) Math.floor( (sector.localPosition.y) - current.localPosition.y );
 					break;
 				}
 			}
