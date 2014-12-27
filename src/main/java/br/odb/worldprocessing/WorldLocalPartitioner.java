@@ -26,30 +26,36 @@ public class WorldLocalPartitioner implements WorldProcessor {
 
 	@Override
 	public void run() {
-		Set<Hyperplane> planes;
+		Set<Hyperplane> planes = new HashSet<Hyperplane>();
 
 		for (SpaceRegion sr : Utils.getAllRegionsAsList(world.masterSector)) {
 			if (sr instanceof GroupSector) {
 				((GroupSector) sr).getSons().add(new Sector(sr));
+
+				planes.addAll(getAllHyperplanesForSector(sr));
 			}
 		}
 
 		List<SpaceRegion> regions = Utils
 				.getAllRegionsAsList(world.masterSector);
 
-		for (SpaceRegion sr : regions) {
-			if (sr instanceof GroupSector) {
-				for (SpaceRegion sr2 : regions) {
-					if (sr2 instanceof GroupSector) {
-						if (sr != sr2 && (sr.intersects(sr2) || sr2.intersects(sr))) {
+		int generated;
 
-							planes = getAllHyperplanesForSector(sr2);
-							splitSectorsWithPlanesFrom((GroupSector) sr, planes);
-						}
-					}
+		int pass = 1;
+
+		do {
+
+			client.printVerbose("->pass " + (pass++));
+
+			generated = 0;
+
+			for (SpaceRegion sr : regions) {
+				if (sr instanceof GroupSector) {
+					generated += splitSectorsWithPlanesFrom((GroupSector) sr,
+							planes);
 				}
 			}
-		}
+		} while (generated != 0);
 
 		int total = 0;
 
@@ -74,11 +80,24 @@ public class WorldLocalPartitioner implements WorldProcessor {
 		return planes;
 	}
 
+	public Set<Hyperplane> getAllHyperplanes() {
+		HashSet<Hyperplane> planes = new HashSet<Hyperplane>();
+
+		for (SpaceRegion sr : Utils.getAllRegionsAsList(world.masterSector)) {
+			if (sr instanceof GroupSector) {
+				for (Direction d : Direction.values()) {
+					planes.add(generateHyperplane((GroupSector) sr, d));
+				}
+			}
+		}
+
+		return planes;
+	}
+
 	public static Hyperplane generateHyperplane(final GroupSector sector,
 			final Direction kind) {
 		float n = 0.0f;
 		Vec3 position = sector.getAbsolutePosition();
-		
 
 		switch (kind) {
 		case N:
@@ -104,15 +123,17 @@ public class WorldLocalPartitioner implements WorldProcessor {
 		return new Hyperplane(kind, n, sector);
 	}
 
-	public void splitSectorsWithPlanesFrom(GroupSector current, Set<Hyperplane> planes) {
+	public int splitSectorsWithPlanesFrom(GroupSector current,
+			Set<Hyperplane> planes) {
 
 		Sector generated;
-		HashSet< Sector > toAdd = new HashSet<Sector>();
-		
+		HashSet<Sector> toAdd = new HashSet<Sector>();
+		int generatedSectors = 0;
+
 		for (Hyperplane plane : planes) {
-			
+
 			toAdd.clear();
-			
+
 			for (SpaceRegion sr : current.getSons()) {
 				if (sr instanceof Sector) {
 					generated = split((Sector) sr, plane);
@@ -122,9 +143,11 @@ public class WorldLocalPartitioner implements WorldProcessor {
 					}
 				}
 			}
-			
-			current.getSons().addAll( toAdd );
+			generatedSectors += toAdd.size();
+			current.getSons().addAll(toAdd);
 		}
+
+		return generatedSectors;
 	}
 
 	public static Sector split(final Sector sector, final Hyperplane hyperplane) {
@@ -132,42 +155,41 @@ public class WorldLocalPartitioner implements WorldProcessor {
 		Sector toReturn;
 		toReturn = null;
 		Vec3 position = sector.getAbsolutePosition();
-		float size;
-		
-		if ( !Float.isNaN( hyperplane.v.x ) ) {
+
+		if (!Float.isNaN(hyperplane.v.x)) {
 			// plane in YZ
 
-			if ( position.x < hyperplane.v.x
+			if (position.x < hyperplane.v.x
 					&& hyperplane.v.x < (position.x + sector.size.x)) {
 				toReturn = new Sector(sector);
-				
-				toReturn.size.x = ( ( position.x + sector.size.x ) - hyperplane.v.x );
-				
+
+				toReturn.size.x = ((position.x + sector.size.x) - hyperplane.v.x);
+
 				toReturn.localPosition.x = (hyperplane.v.x);
-				
+
 				sector.size.x = (hyperplane.v.x) - position.x;
 			}
 
-		} else if ( !Float.isNaN( hyperplane.v.y ) ) {
+		} else if (!Float.isNaN(hyperplane.v.y)) {
 			// plane in XZ
 			if (position.y < hyperplane.v.y
 					&& hyperplane.v.y < (position.y + sector.size.y)) {
 				toReturn = new Sector(sector);
 
-				toReturn.size.y = ( ( position.y + sector.size.y ) - hyperplane.v.y );
-				
+				toReturn.size.y = ((position.y + sector.size.y) - hyperplane.v.y);
+
 				toReturn.localPosition.y = (hyperplane.v.y);
 				sector.size.y = (hyperplane.v.y) - position.y;
 			}
 
-		} else if ( !Float.isNaN( hyperplane.v.z ) ) {
+		} else if (!Float.isNaN(hyperplane.v.z)) {
 			// plane in XY
 			if (position.z < hyperplane.v.z
 					&& hyperplane.v.z < (position.z + sector.size.z)) {
 				toReturn = new Sector(sector);
-				
-				toReturn.size.z = ( ( position.z + sector.size.z ) - hyperplane.v.z );
-				
+
+				toReturn.size.z = ((position.z + sector.size.z) - hyperplane.v.z);
+
 				toReturn.localPosition.z = (hyperplane.v.z);
 				sector.size.z = (hyperplane.v.z) - position.z;
 			}
