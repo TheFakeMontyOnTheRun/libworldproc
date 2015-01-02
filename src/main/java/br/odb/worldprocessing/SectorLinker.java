@@ -39,8 +39,10 @@ public class SectorLinker implements WorldProcessor {
 				continue;
 			}
 
-			client.printVerbose( "checking links for " + s1.id  );
-			
+			if ( client != null ) {
+			    client.printVerbose( "checking links for " + s1.id  );
+			}
+
 			for (SpaceRegion s2 : sectors) {
 
 				if (s2 == s1)
@@ -170,7 +172,7 @@ public class SectorLinker implements WorldProcessor {
 
 	@Override
 	public void setClient(ApplicationClient client) {
-		this.client = client;
+	    //		this.client = client;
 	}
 
 	@Override
