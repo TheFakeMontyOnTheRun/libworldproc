@@ -39,6 +39,8 @@ public class SectorLinker implements WorldProcessor {
 				continue;
 			}
 
+			client.printVerbose( "checking links for " + s1.id  );
+			
 			for (SpaceRegion s2 : sectors) {
 
 				if (s2 == s1)
@@ -48,10 +50,10 @@ public class SectorLinker implements WorldProcessor {
 					continue;
 				}
 
-//				if (s1.parent == s2.parent) {
+				// if (s1.parent == s2.parent) {
 
-					checkLinksForSectors((Sector) s1, (Sector) s2);
-	//			}
+				checkLinksForSectors((Sector) s1, (Sector) s2);
+				// }
 			}
 		}
 	}
@@ -64,21 +66,21 @@ public class SectorLinker implements WorldProcessor {
 
 		Vec3 pos2 = s2.getAbsolutePosition();
 
-		float s2_x0 = pos2.x;
-		float s2_x1 = pos2.x + s2.size.x;
-		float s2_y0 = pos2.y;
-		float s2_y1 = pos2.y + s2.size.y;
-		float s2_z0 = pos2.z;
-		float s2_z1 = pos2.z + s2.size.y;
+		int s2_x0 = Math.round( pos2.x );
+		int s2_x1 = Math.round(pos2.x + s2.size.x);
+		int s2_y0 = Math.round( pos2.y );
+		int s2_y1 = Math.round(pos2.y + s2.size.y);
+		int s2_z0 = Math.round( pos2.z );
+		int s2_z1 = Math.round(pos2.z + s2.size.z);
 
 		Vec3 pos1 = s1.getAbsolutePosition();
 
-		float s1_x0 = pos1.x;
-		float s1_x1 = pos1.x + s1.size.x;
-		float s1_y0 = pos1.y;
-		float s1_y1 = pos1.y + s1.size.y;
-		float s1_z0 = pos1.z;
-		float s1_z1 = pos1.z + s1.size.y;
+		int s1_x0 = Math.round( pos1.x );
+		int s1_x1 = Math.round(pos1.x + s1.size.x);
+		int s1_y0 = Math.round( pos1.y );
+		int s1_y1 = Math.round(pos1.y + s1.size.y);
+		int s1_z0 = Math.round( pos1.z );
+		int s1_z1 = Math.round(pos1.z + s1.size.z);
 
 		if (br.odb.utils.Utils.eqFloat(s1_x0, s2_x1)
 				&& br.odb.utils.Utils.eqFloat(s1_z0, s2_z0)
@@ -90,7 +92,7 @@ public class SectorLinker implements WorldProcessor {
 			s2.connection.put(Direction.E, s1);
 
 			if (client != null) {
-				client.printVerbose("linking " + s1.id + " with " + s2.id);
+				client.printVerbose("linking " + s1.id + " with " + s2.id + " direction: " + Direction.W );
 				;
 			}
 		}
@@ -104,7 +106,7 @@ public class SectorLinker implements WorldProcessor {
 			s2.connection.put(Direction.W, s1);
 
 			if (client != null) {
-				client.printVerbose("linking " + s1.id + " with " + s2.id);
+				client.printVerbose("linking " + s1.id + " with " + s2.id + " direction: " + Direction.E );
 				;
 			}
 		}
@@ -118,7 +120,7 @@ public class SectorLinker implements WorldProcessor {
 			s2.connection.put(Direction.CEILING, s1);
 
 			if (client != null) {
-				client.printVerbose("linking " + s1.id + " with " + s2.id);
+				client.printVerbose("linking " + s1.id + " with " + s2.id + " direction: " + Direction.FLOOR );
 				;
 			}
 		}
@@ -132,7 +134,7 @@ public class SectorLinker implements WorldProcessor {
 			s2.connection.put(Direction.FLOOR, s1);
 
 			if (client != null) {
-				client.printVerbose("linking " + s1.id + " with " + s2.id);
+				client.printVerbose("linking " + s1.id + " with " + s2.id + " direction: " + Direction.CEILING );
 				;
 			}
 		}
@@ -146,7 +148,7 @@ public class SectorLinker implements WorldProcessor {
 			s2.connection.put(Direction.S, s1);
 
 			if (client != null) {
-				client.printVerbose("linking " + s1.id + " with " + s2.id);
+				client.printVerbose("linking " + s1.id + " with " + s2.id + " direction: " + Direction.N );
 				;
 			}
 		}
@@ -160,7 +162,7 @@ public class SectorLinker implements WorldProcessor {
 			s2.connection.put(Direction.N, s1);
 
 			if (client != null) {
-				client.printVerbose("linking " + s1.id + " with " + s2.id);
+				client.printVerbose("linking " + s1.id + " with " + s2.id + " direction: " + Direction.S );
 				;
 			}
 		}
@@ -168,7 +170,7 @@ public class SectorLinker implements WorldProcessor {
 
 	@Override
 	public void setClient(ApplicationClient client) {
-		// this.client = client;
+		this.client = client;
 	}
 
 	@Override

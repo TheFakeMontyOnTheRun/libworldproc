@@ -136,7 +136,7 @@ public class WorldLocalPartitioner implements WorldProcessor {
 
 			for (SpaceRegion sr : current.getSons()) {
 				if (sr instanceof Sector) {
-					generated = split((Sector) sr, plane );
+					generated = split((Sector) sr, plane);
 
 					if (generated != null && !generated.isDegenerate()) {
 						toAdd.add(generated);
@@ -150,7 +150,7 @@ public class WorldLocalPartitioner implements WorldProcessor {
 		return generatedSectors;
 	}
 
-	public static Sector split(final Sector sector, final Hyperplane hyperplane ) {
+	public static Sector split(final Sector sector, final Hyperplane hyperplane) {
 
 		Sector toReturn;
 		toReturn = null;
@@ -174,7 +174,7 @@ public class WorldLocalPartitioner implements WorldProcessor {
 			// plane in XZ
 			if (position.y < hyperplane.v.y
 					&& hyperplane.v.y < (position.y + sector.size.y)) {
-				toReturn = new Sector(sector );
+				toReturn = new Sector(sector);
 
 				toReturn.size.y = ((position.y + sector.size.y) - hyperplane.v.y);
 
@@ -186,7 +186,7 @@ public class WorldLocalPartitioner implements WorldProcessor {
 			// plane in XY
 			if (position.z < hyperplane.v.z
 					&& hyperplane.v.z < (position.z + sector.size.z)) {
-				toReturn = new Sector(sector );
+				toReturn = new Sector(sector);
 
 				toReturn.size.z = ((position.z + sector.size.z) - hyperplane.v.z);
 
