@@ -25,7 +25,7 @@ public class SectorSnapper implements WorldProcessor {
 	@Override
 	public void run() {
 
-		for (SpaceRegion sr : Utils.getAllRegionsAsList(world.masterSector)) {
+		for (SpaceRegion sr : world.getAllRegionsAsList()) {
 			if (sr instanceof Sector) {
 
 				snapSectorConnections(world, (Sector) sr);

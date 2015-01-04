@@ -27,7 +27,7 @@ public class RemoveLeafSectors implements WorldProcessor {
 	public void run() {
 		ArrayList< SpaceRegion > toRemove = new ArrayList<SpaceRegion>();
 
-		for ( SpaceRegion sr : Utils.getAllRegionsAsList( world.masterSector ) ) {
+		for ( SpaceRegion sr : world.getAllRegionsAsList() ) {
 
 			if ( sr instanceof Sector ) {
 

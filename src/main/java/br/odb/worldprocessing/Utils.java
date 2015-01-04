@@ -1,11 +1,4 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.odb.worldprocessing;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import br.odb.libscene.GroupSector;
 import br.odb.libscene.SpaceRegion;
@@ -40,22 +33,5 @@ public class Utils {
 	
 	public static void removeSector(World world, SpaceRegion s) {
 		removeSectorFromSons( world.masterSector, s );		
-	}
-
-	public static List< SpaceRegion > getAllRegionsAsList( GroupSector group ) {
-		
-		ArrayList< SpaceRegion > toReturn = new ArrayList< SpaceRegion >();
-		
-		toReturn.addAll( group.getSons() );
-		
-		for ( SpaceRegion sr : group.getSons() ) {
-			if ( sr instanceof GroupSector ) {
-				toReturn.addAll( getAllRegionsAsList( ( GroupSector )sr ) );
-			}
-		}
-		
-		
-		
-		return toReturn;
 	}
 }

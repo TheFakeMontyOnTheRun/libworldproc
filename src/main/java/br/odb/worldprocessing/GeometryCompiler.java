@@ -44,7 +44,7 @@ public abstract class GeometryCompiler extends ConsoleApplication implements
 
 		if (client != null) {
 
-			client.printVerbose("finished running " + this);
+			client.printVerbose("finished running " + this + " at " + Calendar.getInstance().getTime().toString() );
 		}
 	}
 
