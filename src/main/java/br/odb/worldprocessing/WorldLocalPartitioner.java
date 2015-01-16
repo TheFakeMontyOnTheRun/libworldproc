@@ -3,8 +3,8 @@
  */
 package br.odb.worldprocessing;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import br.odb.gameapp.ApplicationClient;
@@ -26,18 +26,22 @@ public class WorldLocalPartitioner implements WorldProcessor {
 
 	@Override
 	public void run() {
-		int generated = 0;
-		int pass = 1;
-		int total = 0;
 		Set<Hyperplane> planes = new HashSet<Hyperplane>();
-		ArrayList<GroupSector> glist = new ArrayList<GroupSector>();
 
 		for (SpaceRegion sr : world.getAllRegionsAsList()) {
 			if (sr instanceof GroupSector) {
 				((GroupSector) sr).getSons().add(new Sector(sr));
-				glist.add((GroupSector) sr);
+
+				planes.addAll(getAllHyperplanesForSector(sr));
 			}
 		}
+
+		List<SpaceRegion> regions = world
+				.getAllRegionsAsList();
+
+		int generated;
+
+		int pass = 1;
 
 		do {
 
@@ -45,28 +49,15 @@ public class WorldLocalPartitioner implements WorldProcessor {
 
 			generated = 0;
 
-			for ( GroupSector sr : glist) {
-
-				planes.clear();
-
-				for ( GroupSector sr2 : glist) {
-
-					if (sr == sr2) {
-						continue;
-					}
-
-					if (sr.intersects(sr2)) {
-						System.out.println(sr + " intersects with " + sr2);
-						planes.addAll(getAllHyperplanesForSector(sr));
-					}
-
+			for (SpaceRegion sr : regions) {
+				if (sr instanceof GroupSector) {
+					generated += splitSectorsWithPlanesFrom((GroupSector) sr,
+							planes);
 				}
-
-				generated += splitSectorsWithPlanesFrom( sr,
-						planes);
-
 			}
 		} while (generated != 0);
+
+		int total = 0;
 
 		for (SpaceRegion sr : world.getAllRegionsAsList()) {
 
@@ -141,7 +132,12 @@ public class WorldLocalPartitioner implements WorldProcessor {
 
 		for (Hyperplane plane : planes) {
 
-			toAdd.clear();
+			if ( !plane.generator.intersects( current ) ) {
+				continue;
+			}
+
+				toAdd.clear();
+			
 
 			for (SpaceRegion sr : current.getSons()) {
 				if (sr instanceof Sector) {
