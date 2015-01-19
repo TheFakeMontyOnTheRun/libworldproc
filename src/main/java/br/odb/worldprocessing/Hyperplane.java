@@ -3,6 +3,7 @@
  */
 package br.odb.worldprocessing;
 
+import br.odb.libscene.Sector;
 import br.odb.libscene.SpaceRegion;
 import br.odb.utils.Direction;
 import br.odb.utils.math.Vec3;
@@ -75,5 +76,38 @@ public class Hyperplane {
 			break;
 		}
 
+	}
+
+	public boolean stabXY(Sector sector) {
+
+		Vec3 position = sector.getAbsolutePosition();
+		
+		if (!Float.isNaN( v.z)) {
+			return position.z < v.z && v.z < ( position.z + sector.size.z );
+		}
+		return false;
+	}
+	
+	public boolean stabXZ(Sector sector) {
+
+		Vec3 position = sector.getAbsolutePosition();
+		
+		if (!Float.isNaN( v.y)) {
+			return position.y < v.y && v.y < (position.y + sector.size.y);
+		} 	
+
+		return false;
+	}
+
+
+	public boolean stabYZ(Sector sector) {
+
+		Vec3 position = sector.getAbsolutePosition();
+		
+		if (!Float.isNaN( v.x ) ) {
+			return position.x < v.x	&& v.x < (position.x + sector.size.x );
+		}		
+
+		return false;
 	}
 }
