@@ -173,8 +173,8 @@ public class WorldLocalPartitioner implements WorldProcessor {
 
 			toReturn.localPosition.x = (hyperplane.v.x);
 
-			sector.connection.put( Direction.E, toReturn.id );
-			toReturn.connection.put( Direction.W, sector.id );
+			sector.links[ Direction.E.ordinal() ] = toReturn.id;
+			toReturn.links[ Direction.W.ordinal() ] = sector.id;
 			
 			sector.size.x = (hyperplane.v.x) - position.x;
 
@@ -186,8 +186,8 @@ public class WorldLocalPartitioner implements WorldProcessor {
 			toReturn.localPosition.y = (hyperplane.v.y);
 			sector.size.y = (hyperplane.v.y) - position.y;
 
-			sector.connection.put( Direction.CEILING, toReturn.id );
-			toReturn.connection.put( Direction.FLOOR, sector.id );
+			sector.links[ Direction.CEILING.ordinal() ] = toReturn.id;
+			toReturn.links[ Direction.FLOOR.ordinal() ] = sector.id;
 			
 			
 		} else if (hyperplane.stabXY(sector)) {
@@ -198,9 +198,9 @@ public class WorldLocalPartitioner implements WorldProcessor {
 
 			toReturn.localPosition.z = (hyperplane.v.z);
 			sector.size.z = (hyperplane.v.z) - position.z;
-
-			sector.connection.put( Direction.S, toReturn.id );
-			toReturn.connection.put( Direction.N, sector.id );
+			
+			sector.links[ Direction.S.ordinal() ] = toReturn.id;
+			toReturn.links[ Direction.N.ordinal() ] = sector.id;
 		}
 
 		return toReturn;
