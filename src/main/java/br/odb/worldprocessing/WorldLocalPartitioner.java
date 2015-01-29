@@ -167,38 +167,29 @@ public class WorldLocalPartitioner implements WorldProcessor {
 		Vec3 position = sector.getAbsolutePosition();
 
 		if (hyperplane.stabYZ(sector)) {
+			
 			toReturn = new Sector(sector);
-
 			toReturn.size.x = ((position.x + sector.size.x) - hyperplane.v.x);
-
 			toReturn.localPosition.x = (hyperplane.v.x);
-
+			sector.size.x = (hyperplane.v.x) - position.x;
 			sector.links[ Direction.E.ordinal() ] = toReturn.id;
 			toReturn.links[ Direction.W.ordinal() ] = sector.id;
-			
-			sector.size.x = (hyperplane.v.x) - position.x;
 
 		} else if (hyperplane.stabXZ(sector)) {
+			
 			toReturn = new Sector(sector);
-
 			toReturn.size.y = ((position.y + sector.size.y) - hyperplane.v.y);
-
 			toReturn.localPosition.y = (hyperplane.v.y);
 			sector.size.y = (hyperplane.v.y) - position.y;
-
 			sector.links[ Direction.CEILING.ordinal() ] = toReturn.id;
 			toReturn.links[ Direction.FLOOR.ordinal() ] = sector.id;
-			
 			
 		} else if (hyperplane.stabXY(sector)) {
 
 			toReturn = new Sector(sector);
-
 			toReturn.size.z = ((position.z + sector.size.z) - hyperplane.v.z);
-
 			toReturn.localPosition.z = (hyperplane.v.z);
 			sector.size.z = (hyperplane.v.z) - position.z;
-			
 			sector.links[ Direction.S.ordinal() ] = toReturn.id;
 			toReturn.links[ Direction.N.ordinal() ] = sector.id;
 		}
