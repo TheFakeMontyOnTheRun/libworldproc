@@ -23,9 +23,11 @@ public class WorldGlobalPartitioner implements WorldProcessor {
 
 	private ApplicationClient client;
 	private World world;
-
+	static long counter = 0;
+	
 	@Override
 	public void run() {
+		counter = 0;
 		Set<Hyperplane> planes = new HashSet<Hyperplane>();
 
 		for (SpaceRegion sr : world.getAllRegionsAsList()) {
@@ -194,9 +196,15 @@ public class WorldGlobalPartitioner implements WorldProcessor {
 				sector.size.z = (hyperplane.v.z) - position.z;
 			}
 		}
+		
+		if ( toReturn != null ) {
+			toReturn.id = sector.parent.id + "_" + ( ++counter );
+		}
 
 		return toReturn;
 	}
+	
+
 
 	@Override
 	public void setClient(ApplicationClient client) {
