@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.odb.gameapp.ApplicationClient;
-import br.odb.libscene.GroupSector;
-import br.odb.libscene.SpaceRegion;
+import br.odb.libscene.SceneNode;
+import br.odb.libscene.Sector;
 import br.odb.libscene.World;
 
 /**
@@ -28,25 +28,25 @@ public class RemoveCoincidantSectors implements WorldProcessor {
 	@Override
 	public void run() {
 
-		ArrayList<SpaceRegion> toRemove = new ArrayList<SpaceRegion>();
-		List<SpaceRegion> sectors = world.getAllRegionsAsList();
+		List<SceneNode> toRemove = new ArrayList<>();
+		List<SceneNode> sectors = world.getAllRegionsAsList();
 
-		for (SpaceRegion s1 : sectors) {
+		for (SceneNode s1 : sectors) {
 
-			if (s1 instanceof GroupSector) {
+			if ( !( s1 instanceof Sector ) ) {
 				continue;
 			}
 
-			for (SpaceRegion s2 : sectors) {
+			for (SceneNode s2 : sectors) {
 
 				if (s2 == s1)
 					continue;
 
-				if (s2 instanceof GroupSector) {
+				if ( !( s2 instanceof Sector ) ) {
 					continue;
 				}
 
-				if (s1.coincidant(s2) && s1.parent != s2.parent ) {
+				if ( ( (Sector) s1 ).coincidant( (Sector)s2) && s1.parent != s2.parent ) {
 
 					if (client != null
 							&& Utils.getLevel() == Utils.VerbosityLevels.LEVEL_VERBOSE)
@@ -61,7 +61,7 @@ public class RemoveCoincidantSectors implements WorldProcessor {
 
 		client.printWarning("removing " + toRemove.size() + " sectors");
 
-		for (SpaceRegion s : toRemove) {
+		for (SceneNode s : toRemove) {
 			Utils.removeSector(world, s);
 		}
 	}

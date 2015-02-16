@@ -5,7 +5,7 @@ package br.odb.worldprocessing;
 
 import br.odb.gameapp.ApplicationClient;
 import br.odb.libscene.GroupSector;
-import br.odb.libscene.SpaceRegion;
+import br.odb.libscene.SceneNode;
 import br.odb.libscene.World;
 import br.odb.utils.Direction;
 
@@ -25,7 +25,7 @@ public class SectorSnapper implements WorldProcessor {
 	@Override
 	public void run() {
 
-		for (SpaceRegion sr : world.getAllRegionsAsList()) {
+		for (SceneNode sr : world.getAllRegionsAsList()) {
 			if (sr instanceof GroupSector) {
 
 				snapSectorConnections(world, (GroupSector) sr);

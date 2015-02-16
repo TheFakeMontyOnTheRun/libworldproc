@@ -9,6 +9,7 @@ import java.util.Set;
 
 import br.odb.gameapp.ApplicationClient;
 import br.odb.libscene.GroupSector;
+import br.odb.libscene.SceneNode;
 import br.odb.libscene.Sector;
 import br.odb.libscene.SpaceRegion;
 import br.odb.libscene.World;
@@ -30,15 +31,16 @@ public class WorldGlobalPartitioner implements WorldProcessor {
 		counter = 0;
 		Set<Hyperplane> planes = new HashSet<Hyperplane>();
 
-		for (SpaceRegion sr : world.getAllRegionsAsList()) {
+		for (SceneNode sr : world.getAllRegionsAsList()) {
 			if (sr instanceof GroupSector) {
-				((GroupSector) sr).getSons().add(new Sector(sr));
+				
+				((GroupSector) sr).getSons().add(new Sector((GroupSector)sr));
 
-				planes.addAll(getAllHyperplanesForSector(sr));
+				planes.addAll(getAllHyperplanesForSector((GroupSector)sr));
 			}
 		}
 
-		List<SpaceRegion> regions = world
+		List<SceneNode> regions = world
 				.getAllRegionsAsList();
 
 		int generated;
@@ -51,7 +53,7 @@ public class WorldGlobalPartitioner implements WorldProcessor {
 
 			generated = 0;
 
-			for (SpaceRegion sr : regions) {
+			for (SceneNode sr : regions) {
 				if (sr instanceof GroupSector) {
 					generated += splitSectorsWithPlanesFrom((GroupSector) sr,
 							planes);
@@ -61,7 +63,7 @@ public class WorldGlobalPartitioner implements WorldProcessor {
 
 		int total = 0;
 
-		for (SpaceRegion sr : world.getAllRegionsAsList()) {
+		for (SceneNode sr : world.getAllRegionsAsList()) {
 
 			if (sr instanceof Sector) {
 				++total;
@@ -85,7 +87,7 @@ public class WorldGlobalPartitioner implements WorldProcessor {
 	public Set<Hyperplane> getAllHyperplanes() {
 		HashSet<Hyperplane> planes = new HashSet<Hyperplane>();
 
-		for (SpaceRegion sr : world.getAllRegionsAsList()) {
+		for (SceneNode sr : world.getAllRegionsAsList()) {
 			if (sr instanceof GroupSector) {
 				for (Direction d : Direction.values()) {
 					planes.add(generateHyperplane((GroupSector) sr, d));
@@ -136,7 +138,7 @@ public class WorldGlobalPartitioner implements WorldProcessor {
 
 			toAdd.clear();
 
-			for (SpaceRegion sr : current.getSons()) {
+			for (SceneNode sr : current.getSons()) {
 				if (sr instanceof Sector) {
 					generated = split((Sector) sr, plane);
 

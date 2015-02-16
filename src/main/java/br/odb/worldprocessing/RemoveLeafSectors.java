@@ -4,10 +4,11 @@
 package br.odb.worldprocessing;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import br.odb.gameapp.ApplicationClient;
+import br.odb.libscene.SceneNode;
 import br.odb.libscene.Sector;
-import br.odb.libscene.SpaceRegion;
 import br.odb.libscene.World;
 
 /**
@@ -25,9 +26,9 @@ public class RemoveLeafSectors implements WorldProcessor {
 	 */
 	@Override
 	public void run() {
-		ArrayList< SpaceRegion > toRemove = new ArrayList<SpaceRegion>();
+		List< SceneNode > toRemove = new ArrayList<>();
 
-		for ( SpaceRegion sr : world.getAllRegionsAsList() ) {
+		for ( SceneNode sr : world.getAllRegionsAsList() ) {
 
 			if ( sr instanceof Sector ) {
 
@@ -35,7 +36,7 @@ public class RemoveLeafSectors implements WorldProcessor {
 			}
 		}
 
-		for (SpaceRegion s : toRemove) {
+		for (SceneNode s : toRemove) {
 			Utils.removeSector( world, s );
 		}
 	}
