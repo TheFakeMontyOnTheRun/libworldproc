@@ -17,6 +17,7 @@ import br.odb.libscene.World;
  */
 public class RemoveLeafSectors implements WorldProcessor {
 
+	private ApplicationClient client;
 	World world;
 
 	/*
@@ -37,6 +38,7 @@ public class RemoveLeafSectors implements WorldProcessor {
 		}
 
 		for (SceneNode s : toRemove) {
+			client.printWarning("removing leaf " + toRemove.size() + " sectors");
 			Utils.removeSector( world, s );
 		}
 	}
@@ -54,7 +56,7 @@ public class RemoveLeafSectors implements WorldProcessor {
 
 	@Override
 	public void setClient(ApplicationClient client) {
-
+		this.client = client;
 	}
 
 	@Override

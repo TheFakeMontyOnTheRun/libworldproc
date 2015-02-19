@@ -59,7 +59,7 @@ public class RemoveCoincidantSectors implements WorldProcessor {
 			}
 		}
 
-		client.printWarning("removing " + toRemove.size() + " sectors");
+		client.printWarning("removing coincidant " + toRemove.size() + " sectors");
 
 		for (SceneNode s : toRemove) {
 			Utils.removeSector(world, s);

@@ -28,18 +28,25 @@ public class WorldGlobalPartitioner implements WorldProcessor {
 	
 	@Override
 	public void run() {
+		
+		client.printVerbose("cleaning leaf nodes for replacement");
+		
 		counter = 0;
 		Set<Hyperplane> planes = new HashSet<Hyperplane>();
 
+		
+		Sector sector;
+		
 		for (SceneNode sr : world.getAllRegionsAsList()) {
 			if (sr instanceof GroupSector) {
-				
-				((GroupSector) sr).getSons().add(new Sector((GroupSector)sr));
+				sector = new Sector((SpaceRegion)sr );
+//				sector.parent = sr;
+				((GroupSector) sr).getSons().add( sector ); ///This is sooooo wrong...
 
 				planes.addAll(getAllHyperplanesForSector((GroupSector)sr));
 			}
 		}
-
+		client.printVerbose("entering the compiling phase");
 		List<SceneNode> regions = world
 				.getAllRegionsAsList();
 
@@ -221,6 +228,6 @@ public class WorldGlobalPartitioner implements WorldProcessor {
 	@Override
 	public String toString() {
 
-		return "World-wide local partitioning";
+		return "World-wide global partitioning";
 	}
 }
