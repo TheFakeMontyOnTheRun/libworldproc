@@ -20,7 +20,7 @@ import br.odb.utils.math.Vec3;
  * @author monty
  * 
  */
-public class WorldLocalPartitioner implements WorldProcessor {
+public class WorldLocalPartitioner extends WorldPartitioner {
 
 	private ApplicationClient client;
 	private World world;
@@ -97,35 +97,6 @@ public class WorldLocalPartitioner implements WorldProcessor {
 		}
 
 		return planes;
-	}
-
-	public static Hyperplane generateHyperplane(final SpaceRegion sector,
-			final Direction kind) {
-		float n = 0.0f;
-		Vec3 position = sector.getAbsolutePosition();
-
-		switch (kind) {
-		case N:
-			n = position.z;
-			break;
-		case S:
-			n = position.z + sector.size.z;
-			break;
-		case W:
-			n = position.x;
-			break;
-		case E:
-			n = position.x + sector.size.x;
-			break;
-		case FLOOR:
-			n = position.y;
-			break;
-		case CEILING:
-			n = position.y + sector.size.y;
-			break;
-		}
-
-		return new Hyperplane(kind, n, sector);
 	}
 
 	public int splitSectorsWithPlanesFrom(GroupSector current,

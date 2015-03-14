@@ -3,6 +3,7 @@
  */
 package br.odb.worldprocessing;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +21,7 @@ import br.odb.utils.math.Vec3;
  * @author monty
  * 
  */
-public class WorldGlobalPartitioner implements WorldProcessor {
+public class WorldGlobalPartitioner extends WorldPartitioner {
 
 	private ApplicationClient client;
 	private World world;
@@ -105,46 +106,14 @@ public class WorldGlobalPartitioner implements WorldProcessor {
 		return planes;
 	}
 
-	public static Hyperplane generateHyperplane(final GroupSector sector,
-			final Direction kind) {
-		float n = 0.0f;
-		Vec3 position = sector.getAbsolutePosition();
-
-		switch (kind) {
-		case N:
-			n = position.z;
-			break;
-		case S:
-			n = position.z + sector.size.z;
-			break;
-		case W:
-			n = position.x;
-			break;
-		case E:
-			n = position.x + sector.size.x;
-			break;
-		case FLOOR:
-			n = position.y;
-			break;
-		case CEILING:
-			n = position.y + sector.size.y;
-			break;
-		}
-
-		return new Hyperplane(kind, n, sector);
-	}
-
 	public int splitSectorsWithPlanesFrom(GroupSector current,
 			Set<Hyperplane> planes) {
 
 		Sector generated;
-		HashSet<Sector> toAdd = new HashSet<Sector>();
+		List<Sector> toAdd = new ArrayList<Sector>();
 		int generatedSectors = 0;
 
 		for (Hyperplane plane : planes) {
-
-			toAdd.clear();
-
 			for (SceneNode sr : current.getSons()) {
 				if (sr instanceof Sector) {
 					generated = split((Sector) sr, plane);
@@ -154,11 +123,12 @@ public class WorldGlobalPartitioner implements WorldProcessor {
 					}
 				}
 			}
-			generatedSectors += toAdd.size();
-			current.getSons().addAll(toAdd);
 		}
 
-		return generatedSectors;
+		generatedSectors += toAdd.size();
+		current.getSons().addAll(toAdd);
+
+		return generatedSectors; //current.getSons().size();
 	}
 
 	public static Sector split(final Sector sector, final Hyperplane hyperplane) {
@@ -202,32 +172,26 @@ public class WorldGlobalPartitioner implements WorldProcessor {
 				toReturn.size.z = ((position.z + sector.size.z) - hyperplane.v.z);
 
 				toReturn.localPosition.z = (hyperplane.v.z);
+				
 				sector.size.z = (hyperplane.v.z) - position.z;
 			}
 		}
 		
 		if ( toReturn != null ) {
-			toReturn.id = sector.parent.id + "_" + ( ++counter );
+			
+			String id = "_";
+			
+			if ( sector.parent != null ) {
+				id = sector.parent.id;
+			}
+			toReturn.id = id + "_" + ( ++counter );
 		}
 
 		return toReturn;
 	}
-	
-
-
-	@Override
-	public void setClient(ApplicationClient client) {
-		this.client = client;
-	}
-
-	@Override
-	public void prepareFor(World worldToProcess) {
-		world = worldToProcess;
-	}
 
 	@Override
 	public String toString() {
-
 		return "World-wide global partitioning";
 	}
 }
