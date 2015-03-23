@@ -10,9 +10,11 @@ import br.odb.libscene.World;
  * @author monty
  * 
  */
-public class SectorLinker implements WorldProcessor {
+public class SectorLinker extends WorldProcessor {
 
-	private World world;
+	public SectorLinker(ApplicationClient client, World worldToProcess) {
+		super(client, worldToProcess);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -22,15 +24,6 @@ public class SectorLinker implements WorldProcessor {
 	@Override
 	public void run() {
 		world.checkForHardLinks();
-	}
-
-	@Override
-	public void setClient(ApplicationClient client) {
-	}
-
-	@Override
-	public void prepareFor(World worldToProcess) {
-		world = worldToProcess;
 	}
 
 	@Override

@@ -13,9 +13,11 @@ import br.odb.utils.Direction;
  * @author monty
  * 
  */
-public class SectorSnapper implements WorldProcessor {
+public class GroupSectorSnapper extends WorldProcessor {
 
-	private World world;
+	public GroupSectorSnapper(ApplicationClient client, World worldToProcess) {
+		super(client, worldToProcess);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -51,35 +53,21 @@ public class SectorSnapper implements WorldProcessor {
 			case E:
 				current.size.x = Math.round(current.size.x);
 				break;
-			case FLOOR:
-				current.localPosition.y = Math.round(current.localPosition.y);
-				break;
 			case CEILING:
 				current.size.y = Math.round(current.size.y);
+				break;
+			
+			case FLOOR:
+			default:
+				current.localPosition.y = Math.round(current.localPosition.y);
 				break;
 			}
 		}
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see br.odb.libscene.WorldProcessor#prepareFor(br.odb.libscene.World)
-	 */
-	@Override
-	public void prepareFor(World worldToProcess) {
-
-		world = worldToProcess;
-	}
-
+	
 	@Override
 	public String toString() {
 
 		return "Snapping sectors to grid";
-	}
-
-	@Override
-	public void setClient(ApplicationClient client) {
-
 	}
 }

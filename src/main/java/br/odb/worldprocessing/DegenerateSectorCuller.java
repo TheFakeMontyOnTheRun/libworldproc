@@ -14,10 +14,11 @@ import br.odb.libscene.World;
  * @author monty
  * 
  */
-public class DegenerateSectorCuller implements WorldProcessor {
+public class DegenerateSectorCuller extends WorldProcessor {
 
-	World world;
-	private ApplicationClient client;
+	public DegenerateSectorCuller(ApplicationClient client, World worldToProcess) {
+		super(client, worldToProcess);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -37,12 +38,6 @@ public class DegenerateSectorCuller implements WorldProcessor {
 			}
 			
 			if ( ((SpaceRegion)sr).isDegenerate()) {
-
-				if (client != null
-						&& Utils.getLevel() == Utils.VerbosityLevels.LEVEL_VERBOSE)
-					client.printWarning("Sector " + sr.id
-							+ " is degenerated. Removing.");
-
 				toRemove.add( ((SpaceRegion)sr) );
 			}
 		}
@@ -50,25 +45,6 @@ public class DegenerateSectorCuller implements WorldProcessor {
 		for (SpaceRegion s : toRemove) {
 			Utils.removeSector( world, s );
 		}
-	}
-	
-	
-	
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see br.odb.libscene.WorldProcessor#prepareFor(br.odb.libscene.World)
-	 */
-	@Override
-	public void prepareFor(World worldToProcess) {
-
-		world = worldToProcess;
-	}
-
-	@Override
-	public void setClient(ApplicationClient client) {
-		this.client = client;
 	}
 
 	@Override

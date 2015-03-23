@@ -15,10 +15,11 @@ import br.odb.libscene.World;
  * @author monty
  * 
  */
-public class RemoveLeafSectors implements WorldProcessor {
+public class RemoveLeafSectors extends WorldProcessor {
 
-	private ApplicationClient client;
-	World world;
+	public RemoveLeafSectors(ApplicationClient client, World worldToProcess) {
+		super(client, worldToProcess);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -41,22 +42,6 @@ public class RemoveLeafSectors implements WorldProcessor {
 			client.printWarning("removing leaf " + toRemove.size() + " sectors");
 			Utils.removeSector( world, s );
 		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see br.odb.libscene.WorldProcessor#prepareFor(br.odb.libscene.World)
-	 */
-	@Override
-	public void prepareFor(World worldToProcess) {
-
-		world = worldToProcess;
-	}
-
-	@Override
-	public void setClient(ApplicationClient client) {
-		this.client = client;
 	}
 
 	@Override

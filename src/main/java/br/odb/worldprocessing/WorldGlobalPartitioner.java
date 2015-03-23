@@ -3,7 +3,6 @@
  */
 package br.odb.worldprocessing;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,12 +20,14 @@ import br.odb.utils.math.Vec3;
  * @author monty
  * 
  */
-public class WorldGlobalPartitioner extends WorldPartitioner {
+public class WorldGlobalPartitioner extends WorldProcessor {
 
-	private ApplicationClient client;
-	private World world;
+	public WorldGlobalPartitioner(ApplicationClient client, World worldToProcess) {
+		super(client, worldToProcess);
+	}
+
 	static long counter = 0;
-	
+
 	@Override
 	public void run() {
 		
@@ -36,41 +37,30 @@ public class WorldGlobalPartitioner extends WorldPartitioner {
 		Set<Hyperplane> planes = new HashSet<Hyperplane>();
 
 		
-		Sector sector;
+		generateLeafsForWorld( world );
+		planes.addAll( generateHyperplanesForGroupSectorsInWorld( world ) );
 		
-		for (SceneNode sr : world.getAllRegionsAsList()) {
-			if (sr instanceof GroupSector) {
-				sector = new Sector((SpaceRegion)sr );
-//				sector.parent = sr;
-				((GroupSector) sr).getSons().add( sector ); ///This is sooooo wrong...
-
-				planes.addAll(getAllHyperplanesForSector((GroupSector)sr));
-			}
-		}
 		client.printVerbose("entering the compiling phase");
-		List<SceneNode> regions = world
-				.getAllRegionsAsList();
+		List<SceneNode> regions = world.getAllRegionsAsList();
 
-		int generated;
+		
 
-		int pass = 1;
-
-		do {
-
-			client.printVerbose("->pass " + (pass++));
-
-			generated = 0;
-
+		
 			for (SceneNode sr : regions) {
 				if (sr instanceof GroupSector) {
-					generated += splitSectorsWithPlanesFrom((GroupSector) sr,
-							planes);
+					splitSectorsWithPlanesFrom((GroupSector) sr,planes);
 				}
 			}
-		} while (generated != 0);
 
+
+		client.printVerbose(" partitioning finished!");
+		client.printVerbose(" generated " + getTotalSectors( world ) + " leaf sector(s)");
+	}
+
+	int getTotalSectors( World world ) {
+		
 		int total = 0;
-
+		
 		for (SceneNode sr : world.getAllRegionsAsList()) {
 
 			if (sr instanceof Sector) {
@@ -78,57 +68,89 @@ public class WorldGlobalPartitioner extends WorldPartitioner {
 			}
 		}
 
-		client.printVerbose(" partitioning finished!");
-		client.printVerbose(" generated " + total + " leaf sector(s)");
+		return total;
 	}
 
-	public Set<Hyperplane> getAllHyperplanesForSector(SpaceRegion sr) {
-		HashSet<Hyperplane> planes = new HashSet<Hyperplane>();
-
-		for (Direction d : Direction.values()) {
-			planes.add(generateHyperplane((GroupSector) sr, d));
-		}
-
-		return planes;
-	}
-
-	public Set<Hyperplane> getAllHyperplanes() {
-		HashSet<Hyperplane> planes = new HashSet<Hyperplane>();
-
+	public static Set<Hyperplane> generateHyperplanesForGroupSectorsInWorld(World world) {
+		
+		final Set<Hyperplane> toReturn = new HashSet< Hyperplane >();
+		
 		for (SceneNode sr : world.getAllRegionsAsList()) {
 			if (sr instanceof GroupSector) {
-				for (Direction d : Direction.values()) {
-					planes.add(generateHyperplane((GroupSector) sr, d));
-				}
+				toReturn.addAll(getAllHyperplanesForSector((GroupSector)sr));
 			}
+		}
+		
+		return toReturn;
+	}
+	
+	public static void generateLeafsForWorld(World world) {
+		Sector sector;
+		
+		for (SceneNode sr : world.getAllRegionsAsList()) {
+			if (sr instanceof GroupSector) {
+				sector = new Sector( sr.id );
+				sector.localPosition.set( sr.getAbsolutePosition() );
+				sector.size.set( ((GroupSector) sr).size );
+				((GroupSector) sr).addChild( sector );
+			}
+		}
+	}
+
+	public static Set<Hyperplane> getAllHyperplanesForSector(SpaceRegion sr) {
+		Set<Hyperplane> planes = new HashSet<Hyperplane>();
+
+		for (Direction d : Direction.values()) {
+			planes.add( new Hyperplane( d, sr ) );
 		}
 
 		return planes;
 	}
 
-	public int splitSectorsWithPlanesFrom(GroupSector current,
+	public static int splitSectorsWithPlanesFrom(GroupSector current,
 			Set<Hyperplane> planes) {
 
 		Sector generated;
-		List<Sector> toAdd = new ArrayList<Sector>();
-		int generatedSectors = 0;
-
-		for (Hyperplane plane : planes) {
-			for (SceneNode sr : current.getSons()) {
-				if (sr instanceof Sector) {
-					generated = split((Sector) sr, plane);
-
-					if (generated != null && !generated.isDegenerate()) {
-						toAdd.add(generated);
+		Set<Sector> toAdd = new HashSet<Sector>();
+		Set<Sector> toRemove = new HashSet<Sector>();
+		int changedNodes = 0;
+		
+		do {
+			changedNodes = 0;
+			for (Hyperplane plane : planes) {
+				
+				toAdd.clear();
+				
+				for (SceneNode sr : current.getSons()) {
+					if (sr instanceof Sector) {
+						generated = split((Sector) sr, plane);
+	
+						if (generated != null && !generated.isDegenerate()) {
+							toAdd.add(generated);
+						}
 					}
+				}
+				
+				changedNodes = toAdd.size();
+				
+				for (SceneNode sr : toAdd ) {
+					current.addChild( sr );
+				}
+			}
+		} while( changedNodes != 0 );
+
+		
+		for (SceneNode sr : current.getSons()) {
+			if (sr instanceof Sector ) {
+				if ( ( ( Sector ) sr ).isDegenerate() ) {
+					toRemove.add( ( ( Sector ) sr ) );
 				}
 			}
 		}
 
-		generatedSectors += toAdd.size();
-		current.getSons().addAll(toAdd);
+		current.getSons().removeAll( toRemove );
 
-		return generatedSectors; //current.getSons().size();
+		return current.getSons().size();
 	}
 
 	public static Sector split(final Sector sector, final Hyperplane hyperplane) {
@@ -136,17 +158,20 @@ public class WorldGlobalPartitioner extends WorldPartitioner {
 		Sector toReturn;
 		toReturn = null;
 		Vec3 position = sector.getAbsolutePosition();
-
+		
 		if (!Float.isNaN(hyperplane.v.x)) {
 			// plane in YZ
 
 			if (position.x < hyperplane.v.x
 					&& hyperplane.v.x < (position.x + sector.size.x)) {
-				toReturn = new Sector(sector);
-
-				toReturn.size.x = ((position.x + sector.size.x) - hyperplane.v.x);
-
+				
+				toReturn = new Sector( sector.id );
+				
+				toReturn.localPosition.set( sector.getAbsolutePosition() );
+				toReturn.size.set( sector.size );
+				
 				toReturn.localPosition.x = (hyperplane.v.x);
+				toReturn.size.x = sector.size.x - ( hyperplane.v.x - position.x);
 
 				sector.size.x = (hyperplane.v.x) - position.x;
 			}
@@ -155,11 +180,15 @@ public class WorldGlobalPartitioner extends WorldPartitioner {
 			// plane in XZ
 			if (position.y < hyperplane.v.y
 					&& hyperplane.v.y < (position.y + sector.size.y)) {
-				toReturn = new Sector(sector);
+				
+				toReturn = new Sector( sector.id );
+				
+				toReturn.localPosition.set( sector.getAbsolutePosition() );
+				toReturn.size.set( sector.size );
 
-				toReturn.size.y = ((position.y + sector.size.y) - hyperplane.v.y);
-
+				toReturn.size.y = sector.size.y - (hyperplane.v.y - position.y );
 				toReturn.localPosition.y = (hyperplane.v.y);
+				
 				sector.size.y = (hyperplane.v.y) - position.y;
 			}
 
@@ -167,10 +196,13 @@ public class WorldGlobalPartitioner extends WorldPartitioner {
 			// plane in XY
 			if (position.z < hyperplane.v.z
 					&& hyperplane.v.z < (position.z + sector.size.z)) {
-				toReturn = new Sector(sector);
 
-				toReturn.size.z = ((position.z + sector.size.z) - hyperplane.v.z);
+				toReturn = new Sector( sector.id );
+				
+				toReturn.localPosition.set( sector.getAbsolutePosition() );
+				toReturn.size.set( sector.size );
 
+				toReturn.size.z = sector.size.z - (hyperplane.v.z - position.z);
 				toReturn.localPosition.z = (hyperplane.v.z);
 				
 				sector.size.z = (hyperplane.v.z) - position.z;

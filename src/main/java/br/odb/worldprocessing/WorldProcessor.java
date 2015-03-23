@@ -10,8 +10,13 @@ import br.odb.libscene.World;
  * @author monty
  * 
  */
-public interface WorldProcessor extends Runnable {
-	void setClient(ApplicationClient client);
-
-	void prepareFor(World worldToProcess);
+public abstract class WorldProcessor implements Runnable {
+	
+	public World world;
+	public ApplicationClient client;
+	
+	public WorldProcessor( ApplicationClient client, World worldToProcess) {
+		this.client = client;
+		this.world = worldToProcess;
+	}
 }

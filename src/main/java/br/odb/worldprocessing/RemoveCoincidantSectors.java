@@ -15,10 +15,13 @@ import br.odb.libscene.World;
  * @author monty
  * 
  */
-public class RemoveCoincidantSectors implements WorldProcessor {
+public class RemoveCoincidantSectors extends WorldProcessor {
 
-	private ApplicationClient client;
-	private World world;
+
+	public RemoveCoincidantSectors(ApplicationClient client,
+			World worldToProcess) {
+		super(client, worldToProcess);
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -28,57 +31,42 @@ public class RemoveCoincidantSectors implements WorldProcessor {
 	@Override
 	public void run() {
 
+		Utils utils = new Utils();
+		
 		List<SceneNode> toRemove = new ArrayList<>();
 		List<SceneNode> sectors = world.getAllRegionsAsList();
-
-		for (SceneNode s1 : sectors) {
-
-			if ( !( s1 instanceof Sector ) ) {
+		Sector s1;
+		Sector s2;
+		
+		for ( int c = 0; c < sectors.size(); ++c ) {
+			
+			if ( !( sectors.get( c ) instanceof Sector ) ) {
 				continue;
 			}
+			
+			s1 = (Sector) sectors.get( c );
 
-			for (SceneNode s2 : sectors) {
-
-				if (s2 == s1)
-					continue;
-
-				if ( !( s2 instanceof Sector ) ) {
+			for ( int d = c + 1; d < sectors.size(); ++d ) {
+				
+				if ( !( sectors.get( d ) instanceof Sector ) ) {
 					continue;
 				}
+				
+				s2 = (Sector) sectors.get( d );
 
-				if ( ( (Sector) s1 ).coincidant( (Sector)s2) && s1.parent != s2.parent ) {
-
-					if (client != null
-							&& Utils.getLevel() == Utils.VerbosityLevels.LEVEL_VERBOSE)
-						client.printWarning("sector " + s1.id
-								+ " contains with sector " + s2.id);
-
+				if ( ( (Sector) s1 ).coincidant( (Sector)s2) ) {
 					toRemove.add(s2);
-
 				}
 			}
 		}
 
-		client.printWarning("removing coincidant " + toRemove.size() + " sectors");
-
 		for (SceneNode s : toRemove) {
-			Utils.removeSector(world, s);
+			utils.removeSector(world, s);
 		}
-	}
-
-	@Override
-	public void setClient(ApplicationClient client) {
-		this.client = client;
-	}
-
-	@Override
-	public void prepareFor(World worldToProcess) {
-		world = worldToProcess;
 	}
 
 	@Override
 	public String toString() {
-
 		return "Removing coincidant and internal sectors";
 	}
 }

@@ -9,16 +9,6 @@ import br.odb.libscene.World;
  * @author monty
  */
 public class Utils {
-	enum VerbosityLevels { 
-		LEVEL_NORMAL,
-		LEVEL_VERBOSE
-	}
-
-	static VerbosityLevels level = VerbosityLevels.LEVEL_NORMAL;
-
-	static VerbosityLevels getLevel() {
-		return level;
-	}
 	
 	public static void removeSectorFromSons( GroupSector gs, SceneNode son ) {
 		for ( SceneNode sr : gs.getSons() ) {
