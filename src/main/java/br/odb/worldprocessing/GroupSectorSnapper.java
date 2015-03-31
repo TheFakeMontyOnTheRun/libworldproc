@@ -34,6 +34,10 @@ public class GroupSectorSnapper extends WorldProcessor {
 			}
 		}
 	}
+	
+	private final float snap( float val ) {
+		return ( Math.round( val * 1000.0f ) ) / 1000.0f;
+	}
 
 	private void snapSectorConnections(World world, GroupSector current) {
 
@@ -42,24 +46,24 @@ public class GroupSectorSnapper extends WorldProcessor {
 			switch (d) {
 
 			case N:
-				current.localPosition.z = Math.round(current.localPosition.z);
+				current.localPosition.z = snap(current.localPosition.z);
 				break;
 			case S:
-				current.size.z = Math.round(current.size.z);
+				current.size.z = snap(current.size.z);
 				break;
 			case W:
-				current.localPosition.x = Math.round(current.localPosition.x);
+				current.localPosition.x = snap(current.localPosition.x);
 				break;
 			case E:
-				current.size.x = Math.round(current.size.x);
+				current.size.x = snap(current.size.x);
 				break;
 			case CEILING:
-				current.size.y = Math.round(current.size.y);
+				current.size.y = snap(current.size.y);
 				break;
 			
 			case FLOOR:
 			default:
-				current.localPosition.y = Math.round(current.localPosition.y);
+				current.localPosition.y = snap(current.localPosition.y);
 				break;
 			}
 		}

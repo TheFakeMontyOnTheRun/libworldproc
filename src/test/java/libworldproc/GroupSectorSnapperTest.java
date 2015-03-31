@@ -68,8 +68,8 @@ public class GroupSectorSnapperTest {
 		GroupSectorSnapper snapper = new GroupSectorSnapper( new DummyClient(), world );
 		snapper.run();
 		
-		Assert.assertEquals( new Vec3( 0.0f, 1.0f, 0.0f ), slave.localPosition );
-		Assert.assertEquals( new Vec3( 1.0f, 1.0f, 1.0f ), slave.size );
+		Assert.assertEquals( new Vec3( 0.3f, 0.5f, 0.5f ), slave.localPosition );
+		Assert.assertEquals( new Vec3( 0.9f, 1.2f, 1.0f ), slave.size );
 	}
 
 	/**

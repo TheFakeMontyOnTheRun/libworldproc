@@ -31,6 +31,7 @@ public class WorldLocalPartitioner extends WorldPartitioner {
 		List<SceneNode> regions;
 
 		generateLeafsForWorld(world);
+		
 		int previous = -1;
 
 		regions = world.getAllRegionsAsList();
@@ -62,7 +63,6 @@ public class WorldLocalPartitioner extends WorldPartitioner {
 							}
 						}
 						splitSectorsWithPlanesFrom(sr1, planes);
-
 					}
 				}
 			}
