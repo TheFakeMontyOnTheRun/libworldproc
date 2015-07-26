@@ -4,6 +4,7 @@
 package br.odb.worldprocessing;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,21 @@ public class WorldLocalPartitioner extends WorldPartitioner {
 	public WorldLocalPartitioner(ApplicationClient client, World worldToProcess) {
 		super(client, worldToProcess);
 	}
+	
+	
+	Collection< GroupSector > extractGroupSectors( Collection< SceneNode > nodes ) {
+		
+		List< GroupSector > toReturn = new ArrayList<>();
+		
+		for (SceneNode sr1 : nodes) {
+			if (sr1 instanceof GroupSector) {
+				toReturn.add((GroupSector) sr1);
+			}
+		}
+
+		return toReturn;
+	}
+	
 
 	@Override
 	public void run() {
@@ -39,13 +55,9 @@ public class WorldLocalPartitioner extends WorldPartitioner {
 		Set<Hyperplane> planes = new HashSet<>();
 
 		List<GroupSector> groups = new ArrayList<GroupSector>();
-
-		for (SceneNode sr1 : regions) {
-			if (sr1 instanceof GroupSector) {
-				groups.add((GroupSector) sr1);
-			}
-		}
-
+		
+		groups.addAll( extractGroupSectors( regions ) );		
+		
 		while (previous != this.getTotalSectors(world)) {
 
 			previous = this.getTotalSectors(world);
@@ -75,7 +87,6 @@ public class WorldLocalPartitioner extends WorldPartitioner {
 
 	@Override
 	public String toString() {
-
 		return "World-wide local partitioning";
 	}
 }

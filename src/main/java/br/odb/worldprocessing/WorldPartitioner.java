@@ -33,6 +33,12 @@ public abstract class WorldPartitioner extends WorldProcessor {
 			if (position.x < hyperplane.v.x
 					&& hyperplane.v.x < (position.x + sector.size.x)) {
 				
+				if ( Math.abs( position.x - hyperplane.v.x ) < 0.001f ||
+						Math.abs( ( position.x + sector.size.x) - hyperplane.v.x ) < 0.001f
+						) {
+					return null;
+				}
+				
 				toReturn = new Sector( sector.id );
 				
 				toReturn.localPosition.set( sector.getAbsolutePosition() );
@@ -49,6 +55,12 @@ public abstract class WorldPartitioner extends WorldProcessor {
 			if (position.y < hyperplane.v.y
 					&& hyperplane.v.y < (position.y + sector.size.y)) {
 				
+				if ( Math.abs( position.y - hyperplane.v.y ) < 0.001f ||
+						Math.abs( ( position.y + sector.size.y) - hyperplane.v.y ) < 0.001f
+						) {
+					return null;
+				}
+				
 				toReturn = new Sector( sector.id );
 				
 				toReturn.localPosition.set( sector.getAbsolutePosition() );
@@ -61,6 +73,13 @@ public abstract class WorldPartitioner extends WorldProcessor {
 			}
 
 		} else if (!Float.isNaN(hyperplane.v.z)) {
+			
+			if ( Math.abs( position.z - hyperplane.v.z ) < 0.001f ||
+					Math.abs( ( position.z + sector.size.z) - hyperplane.v.z ) < 0.001f
+					) {
+				return null;
+			}
+			
 			// plane in XY
 			if (position.z < hyperplane.v.z
 					&& hyperplane.v.z < (position.z + sector.size.z)) {

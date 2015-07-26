@@ -55,7 +55,7 @@ public class WorldLocalPartitionerTest {
 		WorldLocalPartitioner partitioner = new WorldLocalPartitioner( new DummyClient(), world );
 		partitioner.run();
 		
-		//Assert.assertEquals( 10, world.getAllRegionsAsList().size() );
+//		Assert.assertEquals( 10, world.getAllRegionsAsList().size() );
 				
 
 	}
