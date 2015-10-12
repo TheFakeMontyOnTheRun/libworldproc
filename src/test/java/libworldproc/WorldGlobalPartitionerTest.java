@@ -15,7 +15,7 @@ import br.odb.libscene.SpaceRegion;
 import br.odb.libscene.World;
 import br.odb.utils.Direction;
 import br.odb.utils.math.Vec3;
-import br.odb.worldprocessing.Hyperplane;
+import br.odb.worldprocessing.Plane;
 import br.odb.worldprocessing.WorldGlobalPartitioner;
 
 public class WorldGlobalPartitionerTest {
@@ -91,14 +91,14 @@ public class WorldGlobalPartitionerTest {
 
 		GroupSector gs;
 		Sector s1;
-		Hyperplane plane;
+		Plane plane;
 		Sector s2;
 
 		gs = new GroupSector( "gs" );
 		s1 = new Sector( "test1" );
 		gs.localPosition.set( 0.0f, 0.0f, 5.0f );
 		
-		plane = new Hyperplane( Direction.N, gs );
+		plane = new Plane( Direction.N, gs );
 
 		gs.localPosition.set( 0, 0, 2 );
 		s1.localPosition.set( 0, 0, 2 );
@@ -124,7 +124,7 @@ public class WorldGlobalPartitionerTest {
 		gs = new GroupSector( "gs" );
 		s1 = new Sector( "test1" );
 		gs.localPosition.set( 11.0f, 21.0f, -4.0f );
-		plane = new Hyperplane( Direction.N, 3 );
+		plane = new Plane( Direction.N, 3 );
 
 		gs.localPosition.set( 11, 21, -4 );
 		gs.size.set( 12.0f, 12.0f, 12.0f );
@@ -144,7 +144,7 @@ public class WorldGlobalPartitionerTest {
 		gs = new GroupSector( "gs" );
 		s1 = new Sector( "test1" );
 		gs.localPosition.set( 5.0f, 0.0f, 0.0f );
-		plane = new Hyperplane( Direction.W, gs );
+		plane = new Plane( Direction.W, gs );
 
 		gs.localPosition.set( 2, 0, 0 );
 		s1.localPosition.set( 2, 0, 0 );
@@ -167,7 +167,7 @@ public class WorldGlobalPartitionerTest {
 		gs = new GroupSector( "gs" );
 		s1 = new Sector( "test1" );
 		gs.localPosition.set( 0.0f, 5.0f, 0.0f );
-		plane = new Hyperplane( Direction.FLOOR, gs );
+		plane = new Plane( Direction.FLOOR, gs );
 
 		gs.localPosition.set( 0, 2, 0 );
 		s1.localPosition.set( 0, 2, 0 );
@@ -206,7 +206,7 @@ public class WorldGlobalPartitionerTest {
 		sr1.addChild( s1 );
 		sr2.addChild( s2 );
 
-		plane = new Hyperplane( Direction.N, sr2 );
+		plane = new Plane( Direction.N, sr2 );
 		
 		Sector newSector = WorldGlobalPartitioner.split( s1, plane );
 
@@ -223,11 +223,11 @@ public class WorldGlobalPartitionerTest {
 		SpaceRegion sr = new SpaceRegion( "test" );
 		sr.localPosition.set( 1, 2, 3 );
 		sr.size.set( 4, 5, 6 );
-		Set< Hyperplane > planes = WorldGlobalPartitioner.getAllHyperplanesForSector( sr );
+		Set< Plane > planes = WorldGlobalPartitioner.getAllHyperplanesForSector( sr );
 
 		for ( Direction d : Direction.values() ) {
 			Assert.assertTrue( planes.contains(
-					new Hyperplane( d, sr )));
+					new Plane( d, sr )));
 
 		}		
 	}
@@ -257,7 +257,7 @@ public class WorldGlobalPartitionerTest {
 		sr1.addChild( s1 );
 		sr2.addChild( s2 );
 		
-		Set<Hyperplane> planes = WorldGlobalPartitioner.getAllHyperplanesForSector(sr2);
+		Set<Plane> planes = WorldGlobalPartitioner.getAllHyperplanesForSector(sr2);
 		
 		Assert.assertTrue( sr1.intersects( sr2 ) );
 		Assert.assertTrue( sr2.intersects( sr1 ) );
@@ -393,16 +393,16 @@ public class WorldGlobalPartitionerTest {
 		master.addChild( gs2 );
 		world = new World( master );
 		
-		Set< Hyperplane > planes = WorldGlobalPartitioner.generateHyperplanesForGroupSectorsInWorld(world);
+		Set< Plane > planes = WorldGlobalPartitioner.generateHyperplanesForGroupSectorsInWorld(world);
 		//only from gs1 and gs2
 		Assert.assertEquals( 12, planes.size() );
 		
 		for ( Direction d : Direction.values() ) {
-			Assert.assertTrue( planes.contains( new Hyperplane( d, gs1 ) ) );
+			Assert.assertTrue( planes.contains( new Plane( d, gs1 ) ) );
 		}
 
 		for ( Direction d : Direction.values() ) {
-			Assert.assertTrue( planes.contains( new Hyperplane( d, gs2 ) ) );
+			Assert.assertTrue( planes.contains( new Plane( d, gs2 ) ) );
 		}
 	}
 	

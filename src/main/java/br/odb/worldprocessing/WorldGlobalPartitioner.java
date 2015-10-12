@@ -29,7 +29,7 @@ public class WorldGlobalPartitioner extends WorldPartitioner {
 		client.printVerbose("cleaning leaf nodes for replacement");
 		
 		counter = 0;
-		Set<Hyperplane> planes = new HashSet<Hyperplane>();
+		Set<Plane> planes = new HashSet<Plane>();
 
 		
 		generateLeafsForWorld( world );

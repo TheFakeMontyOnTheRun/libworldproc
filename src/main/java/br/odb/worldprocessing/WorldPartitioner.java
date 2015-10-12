@@ -21,7 +21,7 @@ public abstract class WorldPartitioner extends WorldProcessor {
 
 	static long counter = 0;
 
-	public static Sector split(final Sector sector, final Hyperplane hyperplane) {
+	public static Sector split(final Sector sector, final Plane hyperplane) {
 
 		Sector toReturn;
 		toReturn = null;
@@ -122,18 +122,18 @@ public abstract class WorldPartitioner extends WorldProcessor {
 		}
 	}
 
-	public static Set<Hyperplane> getAllHyperplanesForSector(SpaceRegion sr) {
-		Set<Hyperplane> planes = new HashSet<Hyperplane>();
+	public static Set<Plane> getAllHyperplanesForSector(SpaceRegion sr) {
+		Set<Plane> planes = new HashSet<Plane>();
 
 		for (Direction d : Direction.values()) {
-			planes.add( new Hyperplane( d, sr ) );
+			planes.add( new Plane( d, sr ) );
 		}
 
 		return planes;
 	}
 
 	public static int splitSectorsWithPlanesFrom(GroupSector current,
-			Set<Hyperplane> planes) {
+			Set<Plane> planes) {
 
 		Sector generated;
 		Set<Sector> toAdd = new HashSet<Sector>();
@@ -143,7 +143,7 @@ public abstract class WorldPartitioner extends WorldProcessor {
 		do {
 			changedNodes = 0;
 		
-			for (Hyperplane plane : planes) {
+			for (Plane plane : planes) {
 				
 				toAdd.clear();
 				
@@ -179,9 +179,9 @@ public abstract class WorldPartitioner extends WorldProcessor {
 		return current.getSons().size();
 	}
 	
-	public static Set<Hyperplane> generateHyperplanesForGroupSectorsInWorld(World world) {
+	public static Set<Plane> generateHyperplanesForGroupSectorsInWorld(World world) {
 		
-		final Set<Hyperplane> toReturn = new HashSet< Hyperplane >();
+		final Set<Plane> toReturn = new HashSet< Plane >();
 		
 		for (SceneNode sr : world.getAllRegionsAsList()) {
 			if (sr instanceof GroupSector) {

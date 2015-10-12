@@ -52,7 +52,7 @@ public class WorldLocalPartitioner extends WorldPartitioner {
 
 		regions = world.getAllRegionsAsList();
 
-		Set<Hyperplane> planes = new HashSet<>();
+		Set<Plane> planes = new HashSet<>();
 
 		List<GroupSector> groups = new ArrayList<GroupSector>();
 		

@@ -11,7 +11,7 @@ import br.odb.utils.math.Vec3;
  * @author monty
  * 
  */
-public class Hyperplane {
+public class Plane {
 
 	/**
 	 * 
@@ -38,11 +38,11 @@ public class Hyperplane {
 		if (obj == null)
 			return false;
 		
-		if ( !( obj instanceof Hyperplane ) ) {
+		if ( !( obj instanceof Plane ) ) {
 			return false;
 		}
 			
-		Hyperplane other = (Hyperplane) obj;
+		Plane other = (Plane) obj;
 		if (generator == null) {
 			if (other.generator != null)
 				return false;
@@ -61,7 +61,7 @@ public class Hyperplane {
 				+ generator.id;
 	}
 
-	public Hyperplane(Direction kind, SpaceRegion generator) {
+	public Plane(Direction kind, SpaceRegion generator) {
 
 		this.kind = kind;
 		this.v.set( Float.NaN, Float.NaN, Float.NaN );
@@ -91,7 +91,7 @@ public class Hyperplane {
 		}
 	}
 	
-	public Hyperplane(Direction kind, float n ) {
+	public Plane(Direction kind, float n ) {
 
 		this.kind = kind;
 		this.v.set( Float.NaN, Float.NaN, Float.NaN );
