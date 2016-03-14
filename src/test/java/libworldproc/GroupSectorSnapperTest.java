@@ -11,7 +11,7 @@ import br.odb.gameapp.DummyClient;
 import br.odb.libscene.GroupSector;
 import br.odb.libscene.SceneNode;
 import br.odb.libscene.World;
-import br.odb.utils.math.Vec3;
+import br.odb.gameutils.math.Vec3;
 import br.odb.worldprocessing.GroupSectorSnapper;
 
 /**

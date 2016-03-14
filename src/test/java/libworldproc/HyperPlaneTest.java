@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import br.odb.libscene.SpaceRegion;
-import br.odb.utils.Direction;
+import br.odb.gameutils.Direction;
 import br.odb.worldprocessing.Plane;
 
 /**

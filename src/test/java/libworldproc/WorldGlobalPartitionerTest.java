@@ -13,8 +13,8 @@ import br.odb.libscene.SceneNode;
 import br.odb.libscene.Sector;
 import br.odb.libscene.SpaceRegion;
 import br.odb.libscene.World;
-import br.odb.utils.Direction;
-import br.odb.utils.math.Vec3;
+import br.odb.gameutils.Direction;
+import br.odb.gameutils.math.Vec3;
 import br.odb.worldprocessing.Plane;
 import br.odb.worldprocessing.WorldGlobalPartitioner;
 
