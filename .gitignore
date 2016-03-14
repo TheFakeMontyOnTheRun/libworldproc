@@ -1,3 +1,37 @@
+/.idea/.name
+/.idea/compiler.xml
+/.idea/copyright/profiles_settings.xml
+/.idea/encodings.xml
+/.idea/libraries/Maven__br_odb_gameapp_1_0_SNAPSHOT.xml
+/.idea/libraries/Maven__br_odb_gameutils_1_0_SNAPSHOT.xml
+/.idea/libraries/Maven__br_odb_gameworld_1_0_SNAPSHOT.xml
+/.idea/libraries/Maven__br_odb_liboldfart_1_0_SNAPSHOT.xml
+/.idea/libraries/Maven__br_odb_libscene_1_0_SNAPSHOT.xml
+/.idea/libraries/Maven__br_odb_libstrip_1_0_SNAPSHOT.xml
+/.idea/libraries/Maven__junit_junit_4_10.xml
+/.idea/libraries/Maven__org_hamcrest_hamcrest_core_1_1.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/vcs.xml
+/.idea/workspace.xml
+/libworldproc.iml
+/target/maven-archiver/pom.properties
+/target/surefire-reports/TEST-libworldproc.DegenerateSectorCullerTest.xml
+/target/surefire-reports/TEST-libworldproc.GroupSectorSnapperTest.xml
+/target/surefire-reports/TEST-libworldproc.HyperPlaneTest.xml
+/target/surefire-reports/TEST-libworldproc.RemoveCoincidantSectorsTest.xml
+/target/surefire-reports/TEST-libworldproc.RemoveLeafSectorsTest.xml
+/target/surefire-reports/TEST-libworldproc.SectorLinkerTest.xml
+/target/surefire-reports/TEST-libworldproc.WorldGlobalPartitionerTest.xml
+/target/surefire-reports/TEST-libworldproc.WorldLocalPartitionerTest.xml
+/target/surefire-reports/libworldproc.DegenerateSectorCullerTest.txt
+/target/surefire-reports/libworldproc.GroupSectorSnapperTest.txt
+/target/surefire-reports/libworldproc.HyperPlaneTest.txt
+/target/surefire-reports/libworldproc.RemoveCoincidantSectorsTest.txt
+/target/surefire-reports/libworldproc.RemoveLeafSectorsTest.txt
+/target/surefire-reports/libworldproc.SectorLinkerTest.txt
+/target/surefire-reports/libworldproc.WorldGlobalPartitionerTest.txt
+/target/surefire-reports/libworldproc.WorldLocalPartitionerTest.txt
 *.class
 
 # Mobile Tools for Java (J2ME)
