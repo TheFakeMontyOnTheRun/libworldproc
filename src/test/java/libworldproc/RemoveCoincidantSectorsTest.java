@@ -7,13 +7,15 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import br.odb.gameapp.ApplicationClient;
-import br.odb.gameapp.DummyClient;
+
 import br.odb.libscene.GroupSector;
 import br.odb.libscene.SceneNode;
 import br.odb.libscene.Sector;
 import br.odb.libscene.World;
 import br.odb.worldprocessing.RemoveCoincidantSectors;
 import br.odb.worldprocessing.WorldProcessor;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * @author monty
@@ -63,7 +65,8 @@ public class RemoveCoincidantSectorsTest {
 		slave2.addChild( node );
 		
 		World world = new World( master );
-		WorldProcessor processor = new RemoveCoincidantSectors( new DummyClient(), world );
+		ApplicationClient client = mock( br.odb.gameapp.ApplicationClient.class );
+		WorldProcessor processor = new RemoveCoincidantSectors( client, world );
 		
 		Assert.assertEquals( 2, slave1.getSons().size() );
 		Assert.assertEquals( 3, slave2.getSons().size() );

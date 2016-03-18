@@ -7,13 +7,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import br.odb.gameapp.ApplicationClient;
-import br.odb.gameapp.DummyClient;
 import br.odb.libscene.GroupSector;
 import br.odb.libscene.SceneNode;
 import br.odb.libscene.Sector;
 import br.odb.libscene.World;
 import br.odb.worldprocessing.RemoveLeafSectors;
 import br.odb.worldprocessing.WorldProcessor;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * @author monty
@@ -55,7 +56,8 @@ public class RemoveLeafSectorsTest {
 		slave2.addChild( sector8 );
 		
 		World world = new World( master );
-		WorldProcessor processor = new RemoveLeafSectors( new DummyClient(), world );
+		ApplicationClient client = mock( br.odb.gameapp.ApplicationClient.class );
+		WorldProcessor processor = new RemoveLeafSectors( client, world );
 		processor.run();
 		
 		Assert.assertEquals( 0, slave1.getSons().size() );

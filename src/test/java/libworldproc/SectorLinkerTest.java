@@ -4,10 +4,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import br.odb.gameapp.ApplicationClient;
-import br.odb.gameapp.DummyClient;
+
 import br.odb.libscene.World;
 import br.odb.worldprocessing.SectorLinker;
 import br.odb.worldprocessing.WorldProcessor;
+
+import static org.mockito.Mockito.mock;
 
 public class SectorLinkerTest {
 

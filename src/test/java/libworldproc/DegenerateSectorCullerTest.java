@@ -7,12 +7,14 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import br.odb.gameapp.ApplicationClient;
-import br.odb.gameapp.DummyClient;
+
 import br.odb.libscene.GroupSector;
 import br.odb.libscene.SceneNode;
 import br.odb.libscene.World;
 import br.odb.worldprocessing.DegenerateSectorCuller;
 import br.odb.worldprocessing.WorldProcessor;
+
+import static org.mockito.Mockito.mock;
 
 /**
  * @author monty
@@ -42,7 +44,8 @@ public class DegenerateSectorCullerTest {
 		master.addChild( node );
 		
 		World world = new World( master );
-		WorldProcessor processor = new DegenerateSectorCuller( new DummyClient(), world );
+		ApplicationClient client = mock( br.odb.gameapp.ApplicationClient.class );
+		WorldProcessor processor = new DegenerateSectorCuller( client, world );
 		processor.run();
 		
 		Assert.assertEquals( 3, master.getSons().size() );

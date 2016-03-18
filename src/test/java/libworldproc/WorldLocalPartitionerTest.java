@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import br.odb.gameapp.ApplicationClient;
-import br.odb.gameapp.DummyClient;
+
 import br.odb.libscene.GroupSector;
 import br.odb.libscene.SceneNode;
 import br.odb.libscene.Sector;
@@ -17,6 +17,8 @@ import br.odb.gameutils.Direction;
 import br.odb.gameutils.math.Vec3;
 import br.odb.worldprocessing.Plane;
 import br.odb.worldprocessing.WorldLocalPartitioner;
+
+import static org.mockito.Mockito.mock;
 
 public class WorldLocalPartitionerTest {
 
@@ -50,9 +52,9 @@ public class WorldLocalPartitionerTest {
 		master.addChild( sr1 );
 		master.addChild( sr2 );
 		World world = new World( master );
-		
-		
-		WorldLocalPartitioner partitioner = new WorldLocalPartitioner( new DummyClient(), world );
+
+		ApplicationClient client = mock( br.odb.gameapp.ApplicationClient.class );
+		WorldLocalPartitioner partitioner = new WorldLocalPartitioner( client, world );
 		partitioner.run();
 		
 //		Assert.assertEquals( 10, world.getAllRegionsAsList().size() );
