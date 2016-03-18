@@ -22,34 +22,6 @@ import br.odb.worldprocessing.WorldProcessor;
 public class RemoveLeafSectorsTest {
 
 	/**
-	 * Test method for {@link br.odb.worldprocessing.RemoveLeafSectors#RemoveLeafSectors(br.odb.gameapp.ApplicationClient, br.odb.libscene.World)}.
-	 */
-	@Test
-	public void testRemoveLeafSectors() {
-		WorldProcessor processor;
-		World world = null;
-		ApplicationClient client = null;
-		
-		processor = new RemoveLeafSectors( client, world );
-		
-		Assert.assertNull( processor.client );
-		Assert.assertNull( processor.world );
-		
-		client = new DummyClient();
-		processor = new RemoveLeafSectors( client, world );
-		
-		Assert.assertNotNull( processor.client );
-		Assert.assertNull( processor.world );
-		
-		
-		world = new World();
-		processor = new RemoveLeafSectors( client, world );
-		
-		Assert.assertNotNull( processor.client );
-		Assert.assertNotNull( processor.world );
-	}
-
-	/**
 	 * Test method for {@link br.odb.worldprocessing.RemoveLeafSectors#run()}.
 	 */
 	@Test

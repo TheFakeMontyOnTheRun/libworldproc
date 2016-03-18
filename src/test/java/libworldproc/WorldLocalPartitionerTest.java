@@ -60,31 +60,6 @@ public class WorldLocalPartitionerTest {
 
 	}
 	
-	@Test
-	public final void testConstructor() {
-		WorldLocalPartitioner partitioner;
-		World world = null;
-		ApplicationClient client = null;
-		
-		partitioner = new WorldLocalPartitioner( client, world );
-		
-		Assert.assertNull( partitioner.client );
-		Assert.assertNull( partitioner.world );
-		
-		client = new DummyClient();
-		partitioner = new WorldLocalPartitioner( client, world );
-		
-		Assert.assertNotNull( partitioner.client );
-		Assert.assertNull( partitioner.world );
-		
-		
-		world = new World();
-		partitioner = new WorldLocalPartitioner( client, world );
-		
-		Assert.assertNotNull( partitioner.client );
-		Assert.assertNotNull( partitioner.world );
-	}
-	
 	
 	@Test
 	public final void testSplit() {

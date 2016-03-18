@@ -21,34 +21,6 @@ import br.odb.worldprocessing.WorldProcessor;
 public class DegenerateSectorCullerTest {
 
 	/**
-	 * Test method for {@link br.odb.worldprocessing.DegenerateSectorCuller#DegenerateSectorCuller(br.odb.gameapp.ApplicationClient, br.odb.libscene.World)}.
-	 */
-	@Test
-	public void testDegenerateSectorCuller() {
-		WorldProcessor processor;
-		World world = null;
-		ApplicationClient client = null;
-		
-		processor = new DegenerateSectorCuller( client, world );
-		
-		Assert.assertNull( processor.client );
-		Assert.assertNull( processor.world );
-		
-		client = new DummyClient();
-		processor = new DegenerateSectorCuller( client, world );
-		
-		Assert.assertNotNull( processor.client );
-		Assert.assertNull( processor.world );
-		
-		
-		world = new World();
-		processor = new DegenerateSectorCuller( client, world );
-		
-		Assert.assertNotNull( processor.client );
-		Assert.assertNotNull( processor.world );
-	}
-
-	/**
 	 * Test method for {@link br.odb.worldprocessing.DegenerateSectorCuller#run()}.
 	 */
 	@Test

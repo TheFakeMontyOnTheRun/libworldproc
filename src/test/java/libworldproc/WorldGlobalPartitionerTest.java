@@ -60,31 +60,6 @@ public class WorldGlobalPartitionerTest {
 
 	}
 	
-	@Test
-	public final void testConstructor() {
-		WorldGlobalPartitioner partitioner;
-		World world = null;
-		ApplicationClient client = null;
-		
-		partitioner = new WorldGlobalPartitioner( client, world );
-		
-		Assert.assertNull( partitioner.client );
-		Assert.assertNull( partitioner.world );
-		
-		client = new DummyClient();
-		partitioner = new WorldGlobalPartitioner( client, world );
-		
-		Assert.assertNotNull( partitioner.client );
-		Assert.assertNull( partitioner.world );
-		
-		
-		world = new World();
-		partitioner = new WorldGlobalPartitioner( client, world );
-		
-		Assert.assertNotNull( partitioner.client );
-		Assert.assertNotNull( partitioner.world );
-	}
-	
 	
 	@Test
 	public final void testSplit() {

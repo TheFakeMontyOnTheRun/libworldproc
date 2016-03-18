@@ -21,34 +21,7 @@ import br.odb.worldprocessing.WorldProcessor;
  */
 public class RemoveCoincidantSectorsTest {
 
-	/**
-	 * Test method for
-	 * {@link br.odb.worldprocessing.RemoveCoincidantSectors#RemoveCoincidantSectors(br.odb.gameapp.ApplicationClient, br.odb.libscene.World)}
-	 * .
-	 */
-	@Test
-	public void testRemoveCoincidantSectors() {
-		WorldProcessor processor;
-		World world = null;
-		ApplicationClient client = null;
 
-		processor = new RemoveCoincidantSectors(client, world);
-
-		Assert.assertNull(processor.client);
-		Assert.assertNull(processor.world);
-
-		client = new DummyClient();
-		processor = new RemoveCoincidantSectors(client, world);
-
-		Assert.assertNotNull(processor.client);
-		Assert.assertNull(processor.world);
-
-		world = new World();
-		processor = new RemoveCoincidantSectors(client, world);
-
-		Assert.assertNotNull(processor.client);
-		Assert.assertNotNull(processor.world);
-	}
 
 	/**
 	 * Test method for
